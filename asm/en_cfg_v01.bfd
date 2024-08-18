@@ -2,29 +2,30 @@
 ####----Op-Size----####
 operator_pos_width 30
 width_b 0
-width_s 1
-width_w 2
-width_l 3
+width_s 0
+width_w 0
+width_l 0
 operator_bit_width 2
+
 
 ####----ALU-Type----####
 op_type_nop 0
-op_type_arith 1
-op_type_logic 2
-op_type_shift 3
-op_type_rotate 3
+op_type_arith 0
+op_type_logic 0
+op_type_shift 0
+op_type_rotate 0
 op_type_convert 4
 op_type_compare 5
 
 ####----Arithmetics----###
-operator_pos_arith 27
+operator_pos_arith 16
 
-operator_pos_arith_type 25
-operator_code_add 0
-operator_code_sub 1
-operator_code_mlt 2
-operator_code_div 3
-operator_bit_arith 2
+operator_pos_arith_type 16
+operator_code_add 8192
+operator_code_sub 8193
+operator_code_mlt 16384
+operator_code_div 0
+operator_bit_arith 16
 
 unit_pos_arith 23
 unit_code_u 0
@@ -35,46 +36,46 @@ unit_bits 2
 
 
 ####----Logic----###
-operator_pos_logic 27
+operator_pos_logic 16
 
-operator_pos_logic_type 25
-operator_code_not 0
-operator_code_and 1
-operator_code_or 2
-operator_code_xor 3
-operator_bit_logic 2
-
-operator_pos_not 23
-operator_not_code 1
-operaotr_not_bit 1
+operator_pos_logic_type 16
+operator_code_alw 8256
+operator_code_and 8257
+operator_code_or 8258
+operator_code_xor 8259
+operator_code_not 8260
+operator_code_nand 8261
+operator_code_nor 8262
+operator_code_xnor 8263
+operator_bit_logic 16
 
 
 ####----Shift&Rotate----####
-operator_pos_shift 27
-operator_pos_shift_type 25
+operator_pos_shift 24
+operator_pos_shift_type 24
 
-operator_pos_shift_al 24
+operator_pos_shift_al 25
 shift_type_code_l 1
-shift_type_code_a 1
+shift_type_code_a 0
 shift_type_bit_al 1
 
-operator_pos_shift_lr 23
-shift_code_l 0
-shift_code_r 1
-shift_bit_lr 1
+operator_pos_shift_lr 24
+shift_code_l 66
+shift_code_r 64
+shift_bit_lr 8
 
-operator_pos_rotate 27
-operator_pos_rotate_type 25
+operator_pos_rotate 24
+operator_pos_rotate_type 24
 
-operator_pos_rotate_lr 23
-rotate_code_l 0
-rotate_code_r 1
-rotate_bit_lr 1
+operator_pos_rotate_lr 24
+rotate_code_l 67
+rotate_code_r 0
+rotate_bit_lr 8
 
 
 ####----Convert----####
-operator_pos_convert 27
-operator_pos_convert_type 25
+operator_pos_convert 16
+operator_pos_convert_type 16
 
 operator_pos_convert_dst 25
 operator_pos_convert_src 23
@@ -93,9 +94,9 @@ to_bit 2
 
 
 ####----Compare----####
-operator_pos_compare 27
+operator_pos_compare 16
 
-operator_pos_compare_type 25
+operator_pos_compare_type 16
 operator_code_compare_eq 0
 operator_code_compare_gt 1
 operator_code_compare_le 2
@@ -127,6 +128,9 @@ route_bit_dir 6
 connect_pos_dst 12
 connect_pos_src 0
 connect_bit 8
+
+connect_pos_ne_war 31
+connect_bit_ne_war 1
 
 
 
@@ -169,6 +173,7 @@ access_bit_base_address 32
 
 access_b_block_length 1
 access_block_length 4
+
 
 
 
