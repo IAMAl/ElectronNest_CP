@@ -1,6 +1,7 @@
-import utils.ProgFile
 import utils.IRPaser
-import Gen_LLVMtoCDFG
+import utils.ProgFile
+import llvm.Gen_LLVMtoDFG
+import llvm.Gen_LLVMtoCFG
 
 Gen_DFG     = False
 Gen_CFG     = False
