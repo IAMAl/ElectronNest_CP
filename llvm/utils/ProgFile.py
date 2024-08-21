@@ -1,5 +1,38 @@
 import ProgConstructor
 
+def ProgWriter( prog, w_file_path="./", w_file_name="" ):
+    """
+    Program File Read and Composition
+
+    Arguments:
+        w_file_path:        Writinging File Path
+        w_file_name:        File Name
+
+    Function:
+        - Write parsed program to file
+    """
+    openfile = w_file_path + w_file_name+".txt"
+    with open(openfile, "w") as prog_file:
+        header = "program \""+prog.name+"\""
+        prog_file.write(header)
+
+        for func in prog.funcs:
+            func_header = "begin function \""+func.name+"\""
+            prog_file.write(func_header)
+
+            for block in func.blocks:
+                block_header = "begin bblock \""+block.name+"\""
+                prog_file.write(block_header)
+
+                for instr in block.instrs:
+                    instruction = instr.opcode+" "+instr.dsta+" "+instr.d_type+" "+instr.operand+" "+instr.func.name+" "+instr.br_t+" "+instr.br_f+" "+instr.imm+" "+instr.nemonic
+                    prog_file.write(instruction)
+
+                prog_file.write("end bblock")
+
+            prog_file.write("end function")
+
+
 def ProgReader( r_file_path="./", r_file_name="" ):
     """
     Program File Read and Composition
