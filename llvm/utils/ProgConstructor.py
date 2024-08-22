@@ -1,3 +1,5 @@
+import copy
+
 class instruction:
     opcode = None       #Opcode Name                String
     dst = None          #Destination Name           String
@@ -84,3 +86,33 @@ class program():
 
     def set_name(self, p_name):
         self.name = p_name
+
+
+def InitInstr( prog ):
+    """
+    Initialize Graph Constructor
+    """
+    # Pointer Extraction
+    f_ptr = prog.num_funcs - 1
+    if (f_ptr < 0):
+        f_ptr = 0
+    b_ptr = prog.funcs[f_ptr].num_bblocks - 1
+
+    if (b_ptr < 0):
+        b_ptr = 0
+    i_ptr = prog.funcs[f_ptr].bblocks[b_ptr].num_instrs - 1
+
+    if (i_ptr < 0):
+        i_ptr = 0
+    ptr = {"f_ptr":f_ptr, "b_ptr":b_ptr, "i_ptr":i_ptr}
+    instr = prog.funcs[f_ptr].bblocks[b_ptr].instrs[i_ptr]
+
+    # Instruction Adjacency Matrix Size Extraction
+    total_num_instrs = 0
+    total_num_bblocks = 0
+    for func in prog.funcs:
+        total_num_bblocks += func.num_bblocks
+        for bblock in func.bblocks:
+            total_num_instrs += bblock.num_instrs
+
+    return ptr, prog.num_funcs, total_num_bblocks, total_num_instrs, instr

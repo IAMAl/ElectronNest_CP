@@ -1,4 +1,4 @@
-import ProgConstructor
+import utils.ProgConstructor as progconst
 
 def ProgWriter( prog, w_file_path="./", w_file_name="" ):
     """
@@ -11,26 +11,41 @@ def ProgWriter( prog, w_file_path="./", w_file_name="" ):
     Function:
         - Write parsed program to file
     """
-    openfile = w_file_path + w_file_name+".txt"
+
+    openfile = w_file_path +"/"+ w_file_name
     with open(openfile, "w") as prog_file:
-        header = "program \""+prog.name+"\""
+        header = "program \""+prog.name+"\"\n"
         prog_file.write(header)
 
         for func in prog.funcs:
-            func_header = "begin function \""+func.name+"\""
+            func_header = "begin function \""+func.name+"\"\n"
             prog_file.write(func_header)
 
-            for block in func.blocks:
-                block_header = "begin bblock \""+block.name+"\""
+            for block in func.bblocks:
+                block_header = "begin bblock \""+block.name+"\"\n"
                 prog_file.write(block_header)
 
                 for instr in block.instrs:
-                    instruction = instr.opcode+" "+instr.dsta+" "+instr.d_type+" "+instr.operand+" "+instr.func.name+" "+instr.br_t+" "+instr.br_f+" "+instr.imm+" "+instr.nemonic
+
+                    if hasattr(instr.func, 'name'):
+                        func_name = instr.func.name
+                    else:
+                        func_name = 'main'
+                    
+                    if len(instr.operands) == 1:
+                        operands = instr.operands[0]+"\" "
+                    elif len(instr.operands) == 2:
+                        operands = instr.operands[0]+"\""+instr.operands[1]
+                    else:
+                        operands = ' \" '
+                        
+
+                    instruction = instr.opcode+"\""+str(instr.dst)+"\""+str(instr.d_type)+"\""+str(operands)+"\""+func_name+"\""+str(instr.br_t)+"\""+str(instr.br_f)+"\""+str(instr.imm)+"\""+instr.nemonic+'\"\n'
                     prog_file.write(instruction)
 
-                prog_file.write("end bblock")
+                prog_file.write("end bblock\n")
 
-            prog_file.write("end function")
+            prog_file.write("end function\n")
 
 
 def ProgReader( r_file_path="./", r_file_name="" ):
@@ -45,23 +60,23 @@ def ProgReader( r_file_path="./", r_file_name="" ):
         - Read File of parsed program
         - Compose program() class
     """
-    openfile = r_file_path + r_file_name+".txt"
+    openfile = r_file_path +"/"+ r_file_name.split('.')[0]+'.txt'
     with open(openfile, "r") as prog_file:
         in_prog = False
         in_func = False
         in_bblock = False
         for line in prog_file:
             if "program" in line:
-                prog = program()
-                prog.name = line.split(" ")[1].replace('"', '')
+                prog = progconst.program()
+                prog.name = line.split(" ")[1].replace('"\n', '').replace('"', '')
                 in_prog = True
             elif "begin function" in line:
-                func = function()
-                func.name = line.split(" ")[2].replace('"', '')
+                func = progconst.function()
+                func.name = line.split(" ")[2].replace('"\n', '').replace('"', '')
                 in_func  = True
             elif "begin bblock" in line:
-                bblock = basicblock()
-                bblock.name = line.split(" ")[2].replace('"', '')
+                bblock = progconst.basicblock()
+                bblock.name = line.split(" ")[2].replace('"\n', '').replace('"', '')
                 in_bblock  = True
             elif "end bblock" in line:
                 func.bblocks.append(bblock)
@@ -70,13 +85,15 @@ def ProgReader( r_file_path="./", r_file_name="" ):
                 prog.funcs.append(func)
                 in_func  = False
             elif in_prog and in_func and in_bblock:
-                instr = instruction()
-                line = line.split(" ")
+                instr = progconst.instruction()
+                line = line.split("\"")
                 for index, item in enumerate(line):
+                    item = item.replace('"\n', '')
                     item = item.replace(',', '')
                     item = item.replace('[', '')
                     item = item.replace(']', '')
                     item = item.replace('\'', '')
+                    print(item)
                     if index == 0:
                         instr.opcode = item         #Opcode Name                String
                     elif index == 1:

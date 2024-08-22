@@ -1,10 +1,10 @@
-import utils.InstrTypeChecker
-import llvm.utils.ProgFile
-import utils.ProgConstructor
+import utils.InstrTypeChecker as type
+import utils.ProgConstructor as progconst
 import utils.GraphUtils
+import copy
 
 DEBUG = False
-type_chk = Type_Check()
+type_chk = type.Type_Check()
 
 def instr_parser( instr ):
     """
@@ -530,7 +530,7 @@ def asm_parser( asm ):
     no_line = 0
 
     # Oblects maintains hierarchical structure
-    prog = program()
+    prog = progconst.program()
 
     for line_no, line in enumerate(asm):
         # These set-up lines should be ommitted
@@ -541,7 +541,7 @@ def asm_parser( asm ):
             line.find("attributes") < 0):
 
             # Create Instruction Object
-            instr = instruction()
+            instr = progconst.instruction()
 
             # Parse Switch IR
             if in_switch:
@@ -588,7 +588,7 @@ def asm_parser( asm ):
 
             elif type_chk.is_func(line):
                 # Create Function Object
-                func = function()
+                func = progconst.function()
 
                 # Register Function
                 in_func = True
@@ -606,7 +606,7 @@ def asm_parser( asm ):
 
             elif type_chk.is_bblock(line) and in_func and not in_bblock:
                 # Create Basic-Block Object
-                bblock = basicblock()
+                bblock = progconst.basicblock()
 
                 # Register Basic-Block
                 in_bblock = True
@@ -619,7 +619,7 @@ def asm_parser( asm ):
 
             elif in_func and not in_bblock:
                 # Create "First" Basic-Block Object
-                bblock = basicblock()
+                bblock = progconst.basicblock()
 
                 # Register Basic-Block (Entry-Block)
                 bblock.set_name("entry")
@@ -1241,7 +1241,7 @@ def DataFlowExplore( operand="src2", r=None, g=None ):
 
 
 def IR_Parser( dir_ll, file_name ):
-    openfile = dir_ll + file_name + ".ll"
+    openfile = dir_ll +"/"+ file_name
     prog = None
 
     with open(openfile, "r") as llvm_ir:
@@ -1253,33 +1253,3 @@ def IR_Parser( dir_ll, file_name ):
         print("File: {} parsed.".format(file_name))
 
         return prog
-    
-
-def InitInstr( prog ):
-    """
-    Initialize Graph Constructor
-    """
-    # Pointer Extraction
-    f_ptr = prog.num_funcs - 1
-    if (f_ptr < 0):
-        f_ptr = 0
-    b_ptr = prog.funcs[f_ptr].num_bblocks - 1
-
-    if (b_ptr < 0):
-        b_ptr = 0
-    i_ptr = prog.funcs[f_ptr].bblocks[b_ptr].num_instrs - 1
-
-    if (i_ptr < 0):
-        i_ptr = 0
-    ptr = {"f_ptr":f_ptr, "b_ptr":b_ptr, "i_ptr":i_ptr}
-    instr = prog.funcs[f_ptr].bblocks[b_ptr].instrs[i_ptr]
-
-    # Instruction Adjacency Matrix Size Extraction
-    total_num_instrs = 0
-    total_num_bblocks = 0
-    for func in prog.funcs:
-        total_num_bblocks += func.num_bblocks
-        for bblock in func.bblocks:
-            total_num_instrs += bblock.num_instrs
-
-    return ptr, prog.num_funcs, total_num_bblocks, total_num_instrs, instr
