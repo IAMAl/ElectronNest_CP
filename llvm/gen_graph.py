@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(description="引数の例")
 parser.add_argument('r_file_path_src',  help='source file path',        default='.')
 parser.add_argument('w_file_path'       help='gened file path',         default='.')
 parser.add_argument('r_file_name',      help='source ll file name')
-parser.add_argument('w_file_name',      help='gen type: CFG/DFG/DCFG',  default=None)
+parser.add_argument('w_file_name',      help='gened file name',         default=None)
 
 parser.add_argument('gen_type',         help='gen type: cdfg/dfg/cfg',  default=None)
 parser.add_argument('parse',            help='pasing IR: yes/no',       default='no')
