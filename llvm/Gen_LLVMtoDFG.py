@@ -5,6 +5,9 @@ import utils.GraphUtils as graphutils
 import utils.IRPaser as irparse
 
 
+DEBUG = False
+
+
 def DataFlowExploreOriginal( operand="src2", r=None, g=None ):
     """
     Common Processing task for Source-1 and -2
@@ -272,14 +275,13 @@ def remove_duplicate_edges( num_dup, start_no, lines ):
     return lines
 
 
-def dupl_remover_dfg( w_file_path, prog ):
+def dupl_remover_dfg( w_file_path, dot_file_name ):
     """
     Remove Duplicate
     """
     # Duplicate Remover
     # Directory path maintains LLVM-IR file
-    openfile = w_file_path +"/"+ prog.name+"_dfg_o.dot"
-    dot_file_name = prog.name
+    openfile = w_file_path +"/"+dot_file_name + "_dfg_o.dot"
 
     present_lines = []
     lines = []
@@ -310,8 +312,8 @@ def dupl_remover_dfg( w_file_path, prog ):
         dot_file.writelines(lines)
 
 
-def line_reorder( prog, w_file_path, dot_file_name ):
-    openfile = w_file_path+"/"+ prog.name+"_dfg_r.dot"
+def line_reorder( w_file_path, dot_file_name ):
+    openfile = w_file_path+"/"+ dot_file_name +"_dfg_r.dot"
     lines = []
     with open(openfile, "r") as dot_file:
         for present_line in dot_file:
@@ -360,11 +362,11 @@ def Main_Gen_LLVMtoDFG( prog, r_file_path, r_file_name, w_file_path ):
 
             # Sequence for Source-2 (Right)
             if "next_seq_src2" == Next_State:
-                Next_State = DataFlowExploreOriginal(operand="src2", r=r, g=g)
+                Next_State = DataFlowExplore(operand="src2", r=r, g=g)
 
             # Sequence for Source-1 (Left)
             if "next_seq_src1" == Next_State:
-                Next_State = DataFlowExploreOriginal(operand="src1", r=r, g=g)
+                Next_State = DataFlowExplore(operand="src1", r=r, g=g)
 
             # Check Termination
             if "next_check_term" == Next_State:
@@ -372,7 +374,7 @@ def Main_Gen_LLVMtoDFG( prog, r_file_path, r_file_name, w_file_path ):
 
             # Move Next Instruction
             if "next_reg_dst" == Next_State:
-                Next_State = r.NextInstr(r=r)
+                Next_State = r.NextInstr(prog=prog, r=r)
 
         # Write Edges
         for edge in g.edges:
@@ -381,7 +383,7 @@ def Main_Gen_LLVMtoDFG( prog, r_file_path, r_file_name, w_file_path ):
         g.write("}")
 
     # Reform Graph
-    dot_file_name = prog.name + "_dfg.dot"
+    dot_file_name = prog.name
 
-    dupl_remover_dfg(w_file_path)
-    line_reorder( prog, w_file_path, dot_file_name )
+    dupl_remover_dfg( w_file_path, dot_file_name )
+    line_reorder( w_file_path, dot_file_name )
