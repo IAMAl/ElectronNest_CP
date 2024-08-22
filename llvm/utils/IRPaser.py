@@ -1,6 +1,5 @@
 import utils.InstrTypeChecker as type
 import utils.ProgConstructor as progconst
-import utils.GraphUtils
 import copy
 
 DEBUG = False
@@ -806,6 +805,77 @@ def FetchSrc( src="src2", instr=None ):
         return None
 
 
+def SetNextInstr(r=None):
+    """
+    Move to Next Instr
+    """
+
+    # Get program
+    prog = r.ReadProg()
+
+    # Get current pointer
+    ptr = r.ReadPtr()
+    f_ptr, b_ptr, i_ptr = ptr["f_ptr"], ptr["b_ptr"], ptr["i_ptr"]
+
+    # Set current pointer by exploring next pointer
+    if f_ptr == 0 and b_ptr == 0 and i_ptr == 0:
+        r.next_bb = True
+        ptr = {"f_ptr":f_ptr, "b_ptr":b_ptr, "i_ptr":i_ptr}
+
+    elif f_ptr == 0 and b_ptr == 0 and i_ptr > 0:
+        # Move within this block
+        r.next_bb = False
+        i_ptr -= 1
+        ptr = {"f_ptr":f_ptr, "b_ptr":b_ptr, "i_ptr":i_ptr}
+
+    elif f_ptr == 0 and b_ptr > 0 and i_ptr == 0:
+        # Move within this block
+        r.next_bb = False
+        b_ptr -= 1
+        i_ptr = prog.funcs[f_ptr].bblocks[b_ptr].num_instrs - 1
+        ptr = {"f_ptr":f_ptr, "b_ptr":b_ptr, "i_ptr":i_ptr}
+
+    elif f_ptr == 0 and b_ptr > 0 and i_ptr > 0:
+        # Move within this block
+        r.next_bb = False
+        i_ptr -= 1
+        ptr = {"f_ptr":f_ptr, "b_ptr":b_ptr, "i_ptr":i_ptr}
+
+    elif f_ptr > 0 and b_ptr == 0 and i_ptr == 0:
+        # Move next func last block, last instr
+        r.next_bb = True
+        f_ptr -= 1
+        b_ptr = prog.funcs[f_ptr].num_bblocks - 1
+        i_ptr = prog.funcs[f_ptr].bblocks[b_ptr].num_instrs - 1
+        ptr = {"f_ptr":f_ptr, "b_ptr":b_ptr, "i_ptr":i_ptr}
+
+    elif f_ptr > 0 and b_ptr == 0 and i_ptr > 0:
+        # Move within this bblock
+        r.next_bb = False
+        i_ptr -= 1
+        ptr = {"f_ptr":f_ptr, "b_ptr":b_ptr, "i_ptr":i_ptr}
+
+    elif f_ptr > 0 and b_ptr > 0 and i_ptr == 0:
+        # Move next block
+        r.next_bb = True
+        b_ptr -= 1
+        i_ptr = prog.funcs[f_ptr].bblocks[b_ptr].num_instrs - 1
+        ptr = {"f_ptr":f_ptr, "b_ptr":b_ptr, "i_ptr":i_ptr}
+
+    elif f_ptr > 0 and b_ptr > 0 and i_ptr > 0:
+        # Move within this bblock
+        r.next_bb = False
+        i_ptr -= 1
+        ptr = {"f_ptr":f_ptr, "b_ptr":b_ptr, "i_ptr":i_ptr}
+
+    elif f_ptr == 0 and b_ptr == 1 and i_ptr == 0:
+        # Terminal (No next instr)
+        r.next_bb = True
+        ptr = {"f_ptr":f_ptr, "b_ptr":b_ptr, "i_ptr":i_ptr}
+
+    r.SetPtr(ptr)
+
+
 class RegInstr:
     """
     Registering Utilities
@@ -909,22 +979,7 @@ class RegInstr:
         Set Instruction as a Node
         Update pointers (current and previous) for this loop-cycle.
         """
-        f_ptr, b_ptr, i_ptr = self.ptr["f_ptr"], self.ptr["b_ptr"], self.ptr["i_ptr"]
-        if i_ptr == 0:
-            if b_ptr == 0:
-                if f_ptr == 0:
-                    return "term"
-                else:
-                    f_ptr -= 1
-                    b_ptr = prog.funcs[f_ptr].num_bblocks - 1
-                    i_ptr = prog.funcs[f_ptr].bblocks[b_ptr].num_instrs - 1
-            else:
-                b_ptr -= 1
-                i_ptr = prog.funcs[f_ptr].bblocks[b_ptr].num_instrs - 1
-        else:
-            i_ptr -= 1
-
-        self.ptr["f_ptr"], self.ptr["b_ptr"], self.ptr["i_ptr"] = f_ptr, b_ptr, i_ptr
+        SetNextInstr(r)
 
         # Can Explore Path
         return "next_seq_src2"

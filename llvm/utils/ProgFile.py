@@ -11,41 +11,28 @@ def ProgWriter( prog, w_file_path="./", w_file_name="" ):
     Function:
         - Write parsed program to file
     """
-
     openfile = w_file_path +"/"+ w_file_name
-    with open(openfile, "w") as prog_file:
-        header = "program \""+prog.name+"\"\n"
-        prog_file.write(header)
-
+    with open(openfile, "w") as program:
+        program.write("program {}\n".format(prog.name))
         for func in prog.funcs:
-            func_header = "begin function \""+func.name+"\"\n"
-            prog_file.write(func_header)
-
-            for block in func.bblocks:
-                block_header = "begin bblock \""+block.name+"\"\n"
-                prog_file.write(block_header)
-
-                for instr in block.instrs:
-
-                    if hasattr(instr.func, 'name'):
-                        func_name = instr.func.name
-                    else:
-                        func_name = 'main'
-                    
-                    if len(instr.operands) == 1:
-                        operands = instr.operands[0]+"\" "
-                    elif len(instr.operands) == 2:
-                        operands = instr.operands[0]+"\""+instr.operands[1]
-                    else:
-                        operands = ' \" '
-                        
-
-                    instruction = instr.opcode+"\""+str(instr.dst)+"\""+str(instr.d_type)+"\""+str(operands)+"\""+func_name+"\""+str(instr.br_t)+"\""+str(instr.br_f)+"\""+str(instr.imm)+"\""+instr.nemonic+'\"\n'
-                    prog_file.write(instruction)
-
-                prog_file.write("end bblock\n")
-
-            prog_file.write("end function\n")
+            program.write("\nbegin function {}\n".format(func.name))
+            for bblock in func.bblocks:
+                program.write("\nbegin bblock {}\n".format(bblock.name))
+                for instr in bblock.instrs:
+                    #print(instr.operands)
+                    instruction = []
+                    instruction.append(instr.opcode)     #Opcode Name                String
+                    instruction.append(instr.dst)        #Destination Name           String
+                    instruction.append(instr.d_type)     #Destination Data-Type      String
+                    instruction.append(instr.operands)   #Source Name                String
+                    instruction.append(instr.func)       #Function Name              String
+                    instruction.append(instr.br_t)       #Lavel for Branch Taken     Bool
+                    instruction.append(instr.br_f)       #Lavel for Branch Not Taken Bool
+                    instruction.append(instr.imm)        #Immediate Value            String
+                    instruction.append(instr.nemonic)    #Nemonic (Assembly Code)    String
+                    program.writelines(str(instruction)+"\n")
+                program.write("end bblock {}\n".format(bblock.name))
+            program.write("\nend function {}\n".format(func.name))
 
 
 def ProgReader( r_file_path="./", r_file_name="" ):

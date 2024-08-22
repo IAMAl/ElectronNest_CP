@@ -116,13 +116,11 @@ def dupl_remover_cfg( w_file_path, w_file_name, prog ):
             dot_file.write(present_lines[line_no])
 
 
-def Main_Gen_LLVMtoCFG( prog,r_file_path, r_file_name, w_file_path ):
-
-    #prog = profile.ProgReader(r_file_path, r_file_name)
+def Main_Gen_LLVMtoCFG( prog, w_file_path ):
 
     w_file_name = prog.name + "_cfg.dot"
 
-    with open(w_file_path+"/"+prog.name + "_cfg.dot", "w") as out:
+    with open(w_file_path+"/"+w_file_name, "w") as out:
         # Graph Utilities
         g_cfg = graphutils.GraphUtils(out)
 
@@ -131,4 +129,4 @@ def Main_Gen_LLVMtoCFG( prog,r_file_path, r_file_name, w_file_path ):
         cfg_extractor(prog=prog, out=out)
 
     # Reform Graph
-    #dupl_remover_cfg(w_file_path, w_file_name, prog)
+    dupl_remover_cfg(w_file_path, w_file_name, prog)

@@ -1,5 +1,3 @@
-import utils.InstrTypeChecker
-import utils.ProgFile as progfilr
 import utils.ProgConstructor as progconst
 import utils.GraphUtils as graphutils
 import utils.IRPaser as irparse
@@ -188,77 +186,6 @@ def DataFlowExploreOriginal( operand="src2", r=None, g=None ):
             return "next_reg_dst"
 
 
-def DataFlowExplore( operand="src2", r=None, g=None ):
-    """
-    Common Processing task for Source-1 and -2
-    """
-    # Fetch Present Instr
-    instr = r.ReadInstr(r.ReadPtr())
-    instr_src = irparse.FetchSrc(src=operand, instr=instr)
-
-    # Find instruction having source operand as destination operand
-    match = r.SearchSrc(src=instr_src)
-
-    # Draw Edge when destination addressed by current pointer is matched
-    if match:
-        # Push current pointer when forwarding source-2 path
-        if "src2" == operand and not (irparse.is_None(instr.operands[0]) or irparse.is_Val(instr.operands[0])):
-            r.PushPtr()
-
-        # Marking when source-1 (means source-2 path is already discovered), or
-        #   source-1 is terminal
-        if "src1" == operand or ("src2" == operand and (irparse.is_None(instr.operands[0]) or irparse.is_Val(instr.operands[0]))):
-            r.CheckInstr()
-            g.Count()
-
-        # Fetch hit-instruction
-        next_instr = r.ReadInstr(r.ReadHitPtr())
-
-        # Update current pointer to hit instruction position
-        if len(next_instr.operands) > 0:
-            r.SetPtr(r.ReadHitPtr())
-
-        # Drawing the edge
-        attrib = "[color=blue dir=back]"
-        g.edge(instr.nemonic, next_instr.nemonic, extra=attrib)
-
-        # Forward source-2 Path
-        if len(next_instr.operands) == 2 and not irparse.is_Val(next_instr.operands[1]):
-            # Discovering souce-2 path when source-2 is not value (terminal)
-            if DEBUG:
-                print("    Go to Src-2")
-            return "next_seq_src2"
-
-        elif len(next_instr.operands) == 2 and irparse.is_Val(next_instr.operands[1]):
-            # Skip source-2 discovering when source-2 is value (terminal)
-            if DEBUG:
-                print("    Go to Src-1")
-            return "next_seq_src1"
-
-        elif len(next_instr.operands) == 1 and not irparse.is_Val(next_instr.operands[0]):
-            # Discovering source-1 path
-            if DEBUG:
-                print("    Go to Src-1")
-            return "next_seq_src1"
-
-        elif r.DepthStack() > 0:
-            # Reaches here if #of operands is less than two and
-            #   source-1 is value (teminal)
-            r.PopPtr(SrcNo="Src2")
-            if DEBUG:
-                print("    Go to Src-1")
-            return "next_seq_src1"
-
-        else:
-            # Otherwise dicovering next instruction
-            #   (all sources are a terminal)
-            r.CheckInstr()
-            return "next_reg_dst"
-    else:
-        # Mis-Match Cases
-        return "next_reg_dst"
-
-
 def remove_duplicate_edges( num_dup, start_no, lines ):
     """
     Remove Dupplicate (Same) Edges
@@ -317,8 +244,6 @@ def line_reorder( w_file_path, dot_file_name ):
         for present_line in dot_file:
             lines.append(present_line)
 
-    #remove_duplicate_edges(num_dup, start_no, lines)
-
     dot_file_r_name = w_file_path+"/"+dot_file_name+"_dfg.dot"
     with open(dot_file_r_name, "w") as dot_file:
         dot_file.write(lines[0])
@@ -331,8 +256,7 @@ def line_reorder( w_file_path, dot_file_name ):
         dot_file.write("}")
 
 
-def Main_Gen_LLVMtoDFG( prog, r_file_path, r_file_name, w_file_path ):
-    #prog = ProgReader( r_file_path, r_file_name )
+def Main_Gen_LLVMtoDFG( prog, w_file_path ):
 
     # Create Objects constructing
     #   hierarchical instructin structure
@@ -360,11 +284,11 @@ def Main_Gen_LLVMtoDFG( prog, r_file_path, r_file_name, w_file_path ):
 
             # Sequence for Source-2 (Right)
             if "next_seq_src2" == Next_State:
-                Next_State = DataFlowExplore(operand="src2", r=r, g=g)
+                Next_State = DataFlowExploreOriginal(operand="src2", r=r, g=g)
 
             # Sequence for Source-1 (Left)
             if "next_seq_src1" == Next_State:
-                Next_State = DataFlowExplore(operand="src1", r=r, g=g)
+                Next_State = DataFlowExploreOriginal(operand="src1", r=r, g=g)
 
             # Check Termination
             if "next_check_term" == Next_State:
@@ -385,3 +309,92 @@ def Main_Gen_LLVMtoDFG( prog, r_file_path, r_file_name, w_file_path ):
 
     dupl_remover_dfg( w_file_path, dot_file_name )
     line_reorder( w_file_path, dot_file_name )
+
+
+def BlockDataFlowExtractor( prog, MNEMONIC_MODE, UNIQUE_ID ):
+    ptr, \
+    total_num_funcs, \
+    total_num_blocks, \
+    total_num_instrs, \
+    instr = progconst.InitInstr(prog)
+
+    no_offset = 0
+
+    for func in prog.funcs:
+        name_func = func.name
+
+        for bblock in func.bblocks:
+            name_bblock = bblock.name
+
+            with open(name_func+"_bblock_"+name_bblock+"_dfg.dot", "w") as block_dfg:
+                # Graph Utilities
+                g = graphutils.GraphUtils(block_dfg, total_num_instrs)
+
+                # Graph Header Description
+                g.start_df_graph()
+
+                num_instrs = bblock.num_instrs
+                #print("BBlock: {}".format(name_bblock))
+                for no_instr in range(num_instrs - 1, -1, -1):
+
+                    instr = bblock.instrs[no_instr]
+                    dst_name = instr.dst
+                    operands = instr.operands
+                    imm = instr.imm
+
+                    #print("dst {} {}".format(dst_name, instr.opcode))
+
+                    if len(operands) > 1:
+                        src2_name = operands[1]
+                        #print("src2 {}".format(src2_name))
+                        find = False
+                        for search_no in range(no_instr-1, -1, -1):
+                            search_instr = bblock.instrs[search_no]
+                            search_dst = search_instr.dst
+                            if search_dst == src2_name:
+                                find = True
+                                # Drawing the edge
+                                if MNEMONIC_MODE:
+                                    attrib = "[color=black dir=black]"
+                                    g.write("\"%s\" -> \"%s\"%s" % (search_instr.nemonic, instr.nemonic, attrib))
+                                else:
+                                    attrib = "[color=black dir=black label=\""+search_dst+"\"]"
+                                    g.write("\"%s\" -> \"%s\"%s" % (search_instr.opcode+"_"+str(search_no+no_offset), instr.opcode+"_"+str(no_instr+no_offset), attrib))
+                        if not find:
+                            # Drawing the edge
+                            if MNEMONIC_MODE:
+                                attrib = "[color=blue dir=black]"
+                                g.write("\"%s\" -> \"%s\"%s" % (src2_name, instr.nemonic, attrib))
+                            else:
+                                attrib = "[color=blue dir=black]"
+                                g.write("\"%s\" -> \"%s\"%s" % (src2_name, instr.opcode+"_"+str(no_instr+no_offset), attrib))
+
+                    if len(operands) > 0:
+                        src1_name = operands[0]
+                        #print("src1 {}".format(src1_name))
+                        find = False
+                        for search_no in range(no_instr-1, -1, -1):
+                            search_instr = bblock.instrs[search_no]
+                            search_dst = search_instr.dst
+                            if search_dst == src1_name:
+                                find = True
+                                # Drawing the edge
+                                if MNEMONIC_MODE:
+                                    attrib = "[color=black dir=black]"
+                                    g.write("\"%s\" -> \"%s\"%s" % (search_instr.nemonic, instr.nemonic, attrib))
+                                else:
+                                    attrib = "[color=black dir=black label=\""+search_dst+"\"]"
+                                    g.write("\"%s\" -> \"%s\"%s" % (search_instr.opcode+"_"+str(search_no+no_offset), instr.opcode+"_"+str(no_instr+no_offset), attrib))
+                        if not find:
+                            # Drawing the edge
+                            if MNEMONIC_MODE:
+                                attrib = "[color=blue dir=black]"
+                                g.write("\"%s\" -> \"%s\"%s" % (src1_name, instr.nemonic, attrib))
+                            else:
+                                attrib = "[color=blue dir=black]"
+                                g.write("\"%s\" -> \"%s\"%s" % (src1_name, instr.opcode+"_"+str(no_instr+no_offset), attrib))
+
+                if UNIQUE_ID:
+                    no_offset += num_instrs
+
+                g.write("}")
