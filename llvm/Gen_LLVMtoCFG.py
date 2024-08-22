@@ -5,7 +5,7 @@ import utils.GraphUtils as graphutils
 import utils.IRPaser
 
 
-DEBUG = False
+DEBUG = True
 
 def cfg_extractor( prog, out ):
     """
@@ -21,13 +21,15 @@ def cfg_extractor( prog, out ):
             br_t = prog.funcs[bb_f_indx].bblocks[bb_b_indx].instrs[bb_i_indx].br_t
             br_f = prog.funcs[bb_f_indx].bblocks[bb_b_indx].instrs[bb_i_indx].br_f
 
+            if br_t is not None:
+                br_t = br_t.replace(',', '')
+            if br_f is not None:
+                br_f = br_f.replace(',', '')
+
             # Fetch Destination Node of BBlock
             for f_indx in range(prog.num_funcs):
                 for b_indx in range(prog.funcs[f_indx].num_bblocks):
                     if b_indx != bb_b_indx:
-                        if DEBUG:
-                            print(prog.funcs[f_indx].bblocks[b_indx].name)
-
                         # Assign Node label
                         if prog.funcs[f_indx].bblocks[b_indx].name is not None:
                             if "entry" in prog.funcs[f_indx].bblocks[b_indx].name:
@@ -42,15 +44,19 @@ def cfg_extractor( prog, out ):
 
                         # Fetch Number of Instrs in the BBlock
                         num_instrs = prog.funcs[f_indx].bblocks[b_indx].num_instrs
+
+                        # Fetch Last Instr
                         instr = prog.funcs[f_indx].bblocks[b_indx].instrs[num_instrs - 1]
+
                         fro = target_nemonic
                         to = b_nemonic
+
                         if DEBUG:
-                            print("L: {}  T[{}]  F[{}]".format(b_label, br_t, br_f))
+                            print(" target :{} [ T[{}]  F[{}] ] with {}".format(target_nemonic, br_t, br_f, b_label))
 
                         if br_t is not None and b_label == br_t:
                             if DEBUG:
-                                print("T-Matched:{}".format(br_t))
+                                print(">>T-Matched:{}".format(br_t))
                             if fro == "entry":
                                 attrib = "[color=black dir=black]"
                             elif br_t == br_f:
@@ -61,7 +67,7 @@ def cfg_extractor( prog, out ):
 
                         if br_f is not None and b_label == br_f and br_t != br_f:
                             if DEBUG:
-                                print("F-Matched:{}".format(br_f))
+                                print(">>F-Matched:{}".format(br_f))
                             attrib = "[color=green dir=black]"
                             out.write("\"%s\" -> \"%s\"%s\n" % (fro, to, attrib))
 
@@ -113,7 +119,7 @@ def dupl_remover_cfg( w_file_path, w_file_name, prog ):
 def Main_Gen_LLVMtoCFG( prog,r_file_path, r_file_name, w_file_path ):
 
     #prog = profile.ProgReader(r_file_path, r_file_name)
-    
+
     w_file_name = prog.name + "_cfg.dot"
 
     with open(w_file_path+"/"+prog.name + "_cfg.dot", "w") as out:
