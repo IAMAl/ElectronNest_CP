@@ -194,12 +194,10 @@ def DataFlowExplore( operand="src2", r=None, g=None ):
     """
     # Fetch Present Instr
     instr = r.ReadInstr(r.ReadPtr())
-    instr_dst = instr.dst
     instr_src = irparse.FetchSrc(src=operand, instr=instr)
 
     # Find instruction having source operand as destination operand
     match = r.SearchSrc(src=instr_src)
-    num_operands = len(instr.operands)
 
     # Draw Edge when destination addressed by current pointer is matched
     if match:
