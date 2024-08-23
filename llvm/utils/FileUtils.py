@@ -1,6 +1,25 @@
 import utils.ProgConstructor as progconst
 
-def ProgWriter( prog, w_file_path="./", w_file_name="" ):
+
+def ReadFile( file_path=".", file_name="" ):
+    """
+    File-Open used for CFG (cyclic loops) file
+
+    Arguments
+        file_path:    path (directory) for source file
+        file_name:    name of file for source file
+    """
+    with open(file_path +"/"+ file_name, "r") as file:
+        lines = []
+        for line in file:
+            #print("reading line: {}".format(line))
+            line = line.replace("\n", '')
+            lines.append(line)
+
+        return lines
+
+
+def ProgWriter( prog, w_file_path=".", w_file_name="" ):
     """
     Program File Read and Composition
 
@@ -35,7 +54,7 @@ def ProgWriter( prog, w_file_path="./", w_file_name="" ):
             program.write("\nend function {}\n".format(func.name))
 
 
-def ProgReader( r_file_path="./", r_file_name="" ):
+def ProgReader( r_file_path=".", r_file_name="" ):
     """
     Program File Read and Composition
 
@@ -104,13 +123,13 @@ def ProgReader( r_file_path="./", r_file_name="" ):
     return prog
 
 
-def ReadAM( file_path="./test/", file_name="am.txt" ):
+def ReadAM( file_path=".", file_name="" ):
     """
     File-Open used for AM file
 
     Arguments
-      file_path:    path (directory) for source file
-      file_name:    name of file for source file
+        file_path:    path (directory) for source file
+        file_name:    name of file for source file
     """
 
     f = open( file_path + file_name )

@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(description="args")
 
 parser.add_argument('--src_path',   help='source file path',        default='.')
 parser.add_argument('--w_path',     help='gened file path',         default='.')
-parser.add_argument('--src_name',   help='source ll file name',     required=True)
+parser.add_argument('--src_name',   help='source file name',        required=True)
 parser.add_argument('--w_name',     help='gened file name',         default=None)
 parser.add_argument('--gen_type',   help='gen type: cdfg/dfg/cfg',  required=True)
 parser.add_argument('--block',      help='block: yes/no',           default='no')

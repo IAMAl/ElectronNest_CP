@@ -1,0 +1,18 @@
+import MergeCFGNodes
+import argparse
+
+open('utils/__init__.py', 'a').close()
+
+parser = argparse.ArgumentParser(description="args")
+
+parser.add_argument('--src_path',   help='source file path',    default='.')
+parser.add_argument('--w_path',     help='gened file path',     default='.')
+parser.add_argument('--src_name',   help='source file name',    required=True)
+
+args = parser.parse_args()
+
+r_file_path = args.src_path
+r_file_name = args.src_name
+w_file_path = args.w_path
+
+MergeCFGNodes.CFGNodeMerger( r_file_path, r_file_name, w_file_path )

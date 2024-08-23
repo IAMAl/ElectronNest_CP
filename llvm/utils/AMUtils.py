@@ -4,19 +4,19 @@ import utils.FileUtils as progfile
 def AMComposer( f ):
     """
     Compose Adjacency Matrix (AM)
-      AM for Undirected Edges
-      am_row: AM Row Constructor
-      am:     AM Constructor
+        AM for Undirected Edges
+        am_row: AM Row Constructor
+        am:     AM Constructor
 
     Indices
-      row: source node
-      clm: connected node
+        row: source node
+        clm: connected node
 
     Diagonal Elements
-      AM[row][clm] = 0 when row == clm
+        AM[row][clm] = 0 when row == clm
 
     Up-side or Bottomn-side Triange can be used
-      Our Implementation uses Upside
+        Our Implementation uses Upside
     """
 
     # Adjacency Matrix

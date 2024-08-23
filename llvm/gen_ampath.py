@@ -6,10 +6,10 @@ open('utils/__init__.py', 'a').close()
 
 parser = argparse.ArgumentParser(description="args")
 
-parser.add_argument('--src_path',   help='source file path',        default='.')
-parser.add_argument('--w_path',     help='gened file path',         default='.')
-parser.add_argument('--src_name',   help='source ll file name',     required=True)
-parser.add_argument('--format',     help='parsing IR: yes/no',      default='no')
+parser.add_argument('--src_path',   help='source file path',    default='.')
+parser.add_argument('--w_path',     help='gened file path',     default='.')
+parser.add_argument('--src_name',   help='source file name',    required=True)
+parser.add_argument('--format',     help='parsing IR: yes/no',  default='no')
 
 args = parser.parse_args()
 
