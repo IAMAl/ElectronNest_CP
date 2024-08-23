@@ -1,5 +1,5 @@
 import utils.ProgConstructor as progconst
-import utils.GraphUtils as graphutils
+import utils.DrawUtils as drawutils
 import utils.IRPaser as irparse
 
 
@@ -271,7 +271,7 @@ def Main_Gen_LLVMtoDFG( prog, w_file_path ):
 
     with open(w_file_path+"/"+prog.name + "_dfg_o.dot", "w") as out:
         # Graph Utilities
-        g = graphutils.GraphUtils(out)
+        g = drawutils.drawutils(out)
 
         # Graph Header Description
         g.start_df_graph()
@@ -328,7 +328,7 @@ def BlockDataFlowExtractor( prog, MNEMONIC_MODE, UNIQUE_ID ):
 
             with open(name_func+"_bblock_"+name_bblock+"_dfg.dot", "w") as block_dfg:
                 # Graph Utilities
-                g = graphutils.GraphUtils(block_dfg)
+                g = drawutils.drawutils(block_dfg)
 
                 # Graph Header Description
                 g.start_df_graph()

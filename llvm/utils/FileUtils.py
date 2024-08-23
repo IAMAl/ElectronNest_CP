@@ -102,3 +102,16 @@ def ProgReader( r_file_path="./", r_file_name="" ):
                         instr.nemonic = item        #Nemonic (Assembly Code)    String
                         bblock.append(instr)
     return prog
+
+
+def ReadAM( file_path="./test/", file_name="am.txt" ):
+    """
+    File-Open used for AM file
+
+    Arguments
+      file_path:    path (directory) for source file
+      file_name:    name of file for source file
+    """
+
+    f = open( file_path + file_name )
+    return f

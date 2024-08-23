@@ -1,8 +1,4 @@
-import utils.InstrTypeChecker as type
-import utils.ProgFile as profile
-import utils.ProgConstructor as progconst
-import utils.GraphUtils as graphutils
-import utils.IRPaser
+import utils.DrawUtils as drawutils
 
 
 DEBUG = True
@@ -122,7 +118,7 @@ def Main_Gen_LLVMtoCFG( prog, w_file_path ):
 
     with open(w_file_path+"/"+w_file_name, "w") as out:
         # Graph Utilities
-        g_cfg = graphutils.GraphUtils(out)
+        g_cfg = drawutils.drawutils(out)
 
         # Graph Header Description
         g_cfg.start_cf_graph()

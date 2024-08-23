@@ -1,5 +1,5 @@
 import utils.IRPaser as irparser
-import utils.ProgFile as progfile
+import utils.FileUtils as progfile
 import Gen_LLVMtoDFG
 import Gen_LLVMtoCFG
 import argparse
