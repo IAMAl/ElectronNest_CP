@@ -1,3 +1,12 @@
+##################################################################
+##
+##	ElectronNest_CP
+##	Copyright (C) 2024  Shigeyuki TAKANO
+##
+##  GNU AFFERO GENERAL PUBLIC LICENSE
+##	version 3.0
+##
+##################################################################
 
 import utils.FileUtils as progfile
 import Gen_AM

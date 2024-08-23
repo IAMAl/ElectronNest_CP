@@ -1,3 +1,13 @@
+##################################################################
+##
+##	ElectronNest_CP
+##	Copyright (C) 2024  Shigeyuki TAKANO
+##
+##  GNU AFFERO GENERAL PUBLIC LICENSE
+##	version 3.0
+##
+##################################################################
+
 def ExtractBBs( file_path, file_name ):
     """
     Basic Block Extractor
