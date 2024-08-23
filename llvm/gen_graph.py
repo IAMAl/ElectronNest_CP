@@ -6,8 +6,6 @@ import argparse
 
 open('utils/__init__.py', 'a').close()
 
-import argparse
-
 parser = argparse.ArgumentParser(description="args")
 
 parser.add_argument('--src_path',   help='source file path',        default='.')

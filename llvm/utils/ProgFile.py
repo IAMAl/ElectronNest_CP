@@ -80,7 +80,6 @@ def ProgReader( r_file_path="./", r_file_name="" ):
                     item = item.replace('[', '')
                     item = item.replace(']', '')
                     item = item.replace('\'', '')
-                    print(item)
                     if index == 0:
                         instr.opcode = item         #Opcode Name                String
                     elif index == 1:

@@ -799,7 +799,6 @@ def FetchSrc( src="src2", instr=None ):
         return instr.operands[1]
     elif "src1" == src and len(instr.operands) > 0:
         # Fetch Source-1
-        print(f"operand : {instr.operands[0]}")
         return instr.operands[0]
     else:
         return None
