@@ -49,7 +49,7 @@ def ZeroRemover( am ):
     return am
 
 
-def AMComposer( ZERO_REMOVE=False, mode="dst_append", zero_remove=False, r_file_path="./", r_file_name="@main()_bblock_15_dfg", w_file_path="./", w_file_name="@main()_bblock_15_dfg" ):
+def AMComposer( ZERO_REMOVE=False, mode="dst_append", zero_remove=False, r_file_path=".", r_file_name="", w_file_path=".", w_file_name="" ):
     """
     Adjacency Matrix Composer
 

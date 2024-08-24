@@ -17,10 +17,10 @@ open('utils/__init__.py', 'a').close()
 
 parser = argparse.ArgumentParser(description="args")
 
-parser.add_argument('--src_path',   help='source file path',        default='.')
-parser.add_argument('--w_path',     help='gened file path',         default='.')
-parser.add_argument('--src_name',   help='source file name',     required=True)
-parser.add_argument('--w_name',     help='output file name',     required=True)
+parser.add_argument('--src_path',   help='source file path',    default='.')
+parser.add_argument('--w_path',     help='gened file path',     default='.')
+parser.add_argument('--src_name',   help='source file name',    required=True)
+parser.add_argument('--w_name',     help='output file name',    required=True)
 
 args = parser.parse_args()
 
@@ -33,7 +33,7 @@ am_size, am = amutils.Preprocess(r_file_path=r_file_path, r_file_name=r_file_nam
 
 nodes = []
 for index in range(len(am)):
-    nodes.append(Node(am, am_size, index))
+    nodes.append(graphutils.Node(am, am_size, index))
 
 edgetab = graphutils.EdgeTab(am_size)
 
@@ -46,6 +46,6 @@ if len(CyclicEdges) > 0:
 else:
     print("No Cycles in Graph {}".format(r_file_name))
 
-openfile = w_file_path + w_file_name+"_loop.txt"
+openfile = w_file_path +'/'+ w_file_name+"_loop.txt"
 with open(openfile, "w") as cfg_cycle_file:
     cfg_cycle_file.writelines(str(CyclicEdges))
