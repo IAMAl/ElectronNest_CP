@@ -10,7 +10,6 @@
 
 import utils.GraphUtils as graphutils
 
-
 def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
 
     read_no = 1
@@ -37,7 +36,7 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
                 edges = graphutils.RemoveList(edges)
 
                 if graphutils.CheckEmpty(node_id, edges) and steps != 0:
-                    print("  Node-{} Terminated: {}".format(node_id, edges))
+                    #print("  Node-{} Terminated: {}".format(node_id, edges))
                     nodes[node_id].Set_Term()
 
                 dest_ids = nodes[node_id].Read_DestIDs()
@@ -80,8 +79,6 @@ def RemoveCycles(CyclicEdges):
                             #print("idx:{} offset:{} for {}".format(idx, offset, cycle))
                         else:
                             check_cycle = check_cycle[1:]+check_cycle[:1]
-
-
 
     return CyclicEdges_
 

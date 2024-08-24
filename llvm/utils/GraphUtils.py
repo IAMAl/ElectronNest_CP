@@ -43,8 +43,8 @@ class Node:
         self.Term = True
 
     def Check_Term(self):
-        if self.Term:
-            print("Node-{} is ended".format(self.NodeID))
+        #if self.Term:
+        #    print("Node-{} is ended".format(self.NodeID))
         #else:
         #    print("Node-{} runs".format(self.NodeID))
         return self.Term

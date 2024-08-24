@@ -19,7 +19,7 @@ def ExtractBBs( file_path, file_name ):
     bblocks = []
     instrs = []
 
-    with open(file_path+"/"+file_name, 'r') as file:
+    with open(file_path+"/"+file_name+".ll", 'r') as file:
         instrs = []
         bblocks = []
         count = 0
@@ -199,11 +199,13 @@ def CFGNodeMerger( r_file_path, r_file_name ):
     return bblocks
 
 
-def CFGNodeMerger( r_file_path, r_file_name, w_file_path ):
-    w_file_name = r_file_name
+def ExtractCFGNodeMerger( r_file_path, r_file_name, w_file_path ):
+    w_file_name = r_file_name+"_merged.txt"
 
-    bblocks = CFGNodeMerger(r_file_path, r_file_name, w_file_path)
+    bblocks = CFGNodeMerger(r_file_path, r_file_name)
     with open(w_file_path+"/"+w_file_name, 'w') as file:
-        for bblock in bblocks:
-            for instr in bblock:
+        for index, bblock in enumerate(bblocks):
+            #print(index)
+            for idx, instr in enumerate(bblock):
+                #print(idx)
                 file.write(instr)

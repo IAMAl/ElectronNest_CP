@@ -25,4 +25,4 @@ r_file_path = args.src_path
 r_file_name = args.src_name
 w_file_path = args.w_path
 
-MergeCFGNodes.CFGNodeMerger( r_file_path, r_file_name, w_file_path )
+MergeCFGNodes.ExtractCFGNodeMerger( r_file_path, r_file_name, w_file_path )
