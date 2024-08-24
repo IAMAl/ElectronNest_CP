@@ -61,7 +61,7 @@ def GetShape(lst):
     if isinstance(lst, list):
         shape.append(len(lst))
         if lst:
-        shape.extend(GetShape(lst[0]))
+            shape.extend(GetShape(lst[0]))
     return shape
 
 
@@ -70,8 +70,8 @@ def AppendLowestList(my_id, lst):
     temp = []
     if isinstance(lst, list):
         for lst_ in lst:
-        #print("test:{}".format(lst_))
-        rtn_lst, check = AppendLowestList(my_id, lst_)
+            #print("test:{}".format(lst_))
+            rtn_lst, check = AppendLowestList(my_id, lst_)
 
         if not check:
             temp.append(lst_)

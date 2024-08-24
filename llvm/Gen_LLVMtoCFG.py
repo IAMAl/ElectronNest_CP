@@ -11,7 +11,7 @@
 import utils.DrawUtils as drawutils
 
 
-DEBUG = True
+DEBUG = False
 
 def cfg_extractor( prog, out ):
     """
@@ -128,7 +128,7 @@ def Main_Gen_LLVMtoCFG( prog, w_file_path ):
 
     with open(w_file_path+"/"+w_file_name, "w") as out:
         # Graph Utilities
-        g_cfg = drawutils.drawutils(out)
+        g_cfg = drawutils.GraphUtils(out)
 
         # Graph Header Description
         g_cfg.start_cf_graph()

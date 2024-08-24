@@ -33,7 +33,7 @@ if 'yes'== args.format:
     PATH_FORMAT = True
 
 
-prog = fileutils.ReadProgram( r_file_path=r_file_path, r_file_name=r_file_name )
+prog = fileutils.ProgReader( r_file_path=r_file_path, r_file_name=r_file_name )
 
 
 for func in prog.funcs:

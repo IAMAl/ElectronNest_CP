@@ -31,15 +31,13 @@ parser.add_argument('--parse',      help='parsing IR: yes/no',      default='yes
 args = parser.parse_args()
 
 
-if 'no' == args.nm_mode:
+MNEMONIC_MODE   = True
+if 'yes' == args.nm_mode:
     MNEMONIC_MODE   = False
-else:
-    MNEMONIC_MODE   = True
 
+UNIQUE_ID       = True
 if 'no' == args.unique_id:
     UNIQUE_ID       = False
-else:
-    UNIQUE_ID       = True
 
 
 Gen_DFG     = False

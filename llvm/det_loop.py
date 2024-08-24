@@ -19,8 +19,8 @@ parser = argparse.ArgumentParser(description="args")
 
 parser.add_argument('--src_path',   help='source file path',        default='.')
 parser.add_argument('--w_path',     help='gened file path',         default='.')
-parser.add_argument('--src_name',   help='source ll file name',     required=True)
-parser.add_argument('--w_name',     help='source ll file name',     required=True)
+parser.add_argument('--src_name',   help='source file name',     required=True)
+parser.add_argument('--w_name',     help='output file name',     required=True)
 
 args = parser.parse_args()
 

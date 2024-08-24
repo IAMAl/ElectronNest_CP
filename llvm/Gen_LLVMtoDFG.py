@@ -338,7 +338,7 @@ def BlockDataFlowExtractor( prog, MNEMONIC_MODE, UNIQUE_ID ):
 
             with open(name_func+"_bblock_"+name_bblock+"_dfg.dot", "w") as block_dfg:
                 # Graph Utilities
-                g = drawutils.drawutils(block_dfg)
+                g = drawutils.GraphUtils(block_dfg)
 
                 # Graph Header Description
                 g.start_df_graph()

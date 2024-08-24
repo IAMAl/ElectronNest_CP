@@ -199,10 +199,10 @@ def CFGNodeMerger( r_file_path, r_file_name ):
     return bblocks
 
 
-CFGNodeMerger( r_file_path, r_file_name, w_file_path ):
+def CFGNodeMerger( r_file_path, r_file_name, w_file_path ):
     w_file_name = r_file_name
 
-    bblocks = CFGNodeMerger(r_file_path, r_file_name)
+    bblocks = CFGNodeMerger(r_file_path, r_file_name, w_file_path)
     with open(w_file_path+"/"+w_file_name, 'w') as file:
         for bblock in bblocks:
             for instr in bblock:

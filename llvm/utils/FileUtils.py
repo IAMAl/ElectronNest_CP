@@ -142,5 +142,5 @@ def ReadAM( file_path=".", file_name="" ):
         file_name:    name of file for source file
     """
 
-    f = open( file_path + file_name )
+    f = open( file_path +'/'+ file_name )
     return f

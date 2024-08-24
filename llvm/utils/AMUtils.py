@@ -75,7 +75,7 @@ def AMComposer( f ):
 
 def Preprocess(r_file_path=".", r_file_name=""):
 
-    file_name = r_file_name+"/"+"_am_inv.txt"
+    file_name = r_file_name+"_am_inv.txt"
     f = progfile.ReadAM( file_path=r_file_path, file_name=file_name )
     am_size, am = AMComposer( f )
 

@@ -93,7 +93,7 @@ def BackPath(PATH_FORMAT=False, r_file_path="./", r_file_name="@main()_bblock_15
 
     #Setting Up Node List
     bb_node_list = []
-    with open(r_file_path+r_file_name+"_node_list_inv.txt", "r") as bb_dfg_nl:
+    with open(r_file_path+'/'+r_file_name+"_node_list_inv.txt", "r") as bb_dfg_nl:
         for node in bb_dfg_nl:
             node = node.replace('\n', '')
             node = node.split(' ')
@@ -102,7 +102,7 @@ def BackPath(PATH_FORMAT=False, r_file_path="./", r_file_name="@main()_bblock_15
     #Setting Up Inverse-AM
     bb_inv_am = []
     bb_inv_am.append([])
-    with open(r_file_path+r_file_name+"_am_inv.txt", "r") as bb_dfg_am:
+    with open(r_file_path+'/'+r_file_name+"_am_inv.txt", "r") as bb_dfg_am:
         for no, row in enumerate(bb_dfg_am):
             row = row.replace('\n', '')
             row = row.replace('[', '')
@@ -118,7 +118,7 @@ def BackPath(PATH_FORMAT=False, r_file_path="./", r_file_name="@main()_bblock_15
             bb_inv_am.append([])
 
     find = False
-    with open(w_file_path+w_file_name+"_bpath.txt", "w") as bpath:
+    with open(w_file_path+'/'+w_file_name+"_bpath.txt", "w") as bpath:
         #Find Store Instr
         no_stores = 0
 
@@ -195,7 +195,7 @@ def StLdMarker(r_file_path="./", r_file_name="@main()_bblock_12", w_file_path=".
 
     #Setting Up Node List
     bb_node_list = []
-    with open(r_file_path+r_file_name+"_node_list_inv.txt", "r") as bb_dfg_nl:
+    with open(r_file_path+'/'+r_file_name+"_node_list_inv.txt", "r") as bb_dfg_nl:
         for node in bb_dfg_nl:
             node = node.replace('\n', '')
             node = node.split(' ')
@@ -204,7 +204,7 @@ def StLdMarker(r_file_path="./", r_file_name="@main()_bblock_12", w_file_path=".
     #Setting Up Path List
     backpaths = []
     paths_ = []
-    with open(w_file_path+w_file_name+"_bpath.txt", "r") as bpath:
+    with open(w_file_path+'/'+w_file_name+"_bpath.txt", "r") as bpath:
         for paths in bpath:
             paths = paths.split("][")
             paths[0] = paths[0][1:]
@@ -295,11 +295,11 @@ def StLdMarker(r_file_path="./", r_file_name="@main()_bblock_12", w_file_path=".
                     if find_root:
                         stld_paths.append(path_)
 
-    with open(w_file_path+w_file_name+"_bpath_st_root.txt", "w") as st_bpath:
+    with open(w_file_path+'/'+w_file_name+"_bpath_st_root.txt", "w") as st_bpath:
         st_bpath.writelines(map(str, st_root_paths))
 
-    with open(w_file_path+w_file_name+"_bpath_st_ld.txt", "w") as st_ld_bpath:
+    with open(w_file_path+'/'+w_file_name+"_bpath_st_ld.txt", "w") as st_ld_bpath:
         st_ld_bpath.writelines(map(str, stld_paths))
 
-    with open(w_file_path+w_file_name+"_bpath_ld_leaf.txt", "w") as ld_bpath:
+    with open(w_file_path+'/'+w_file_name+"_bpath_ld_leaf.txt", "w") as ld_bpath:
         ld_bpath.writelines(map(str, ld_leaf_paths))
