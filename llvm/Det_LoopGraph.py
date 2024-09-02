@@ -90,7 +90,10 @@ def Get_Neighbors( my_no, am_size, am, ng_id ):
             if row[index] == 1 and index != ng_id:
                 nnodes.append(index)
 
-        return nnodes
+        if len(nnodes) == 1:
+            return [-1]+nnodes
+        else:
+            return nnodes
     else:
         return []
 
@@ -118,7 +121,7 @@ def is_NotTerm( Paths ):
     return True
 
 
-def RollBack(target_id, ptr, Paths):
+def RollBack(target_id, ptr, prev_ptr, Paths):
 
     for check_ptr in range(ptr, -1,-1):
         check_id = Paths[check_ptr][0]
@@ -131,7 +134,7 @@ def RollBack(target_id, ptr, Paths):
             if len(check_srcs) <= (check_addr+1):
                 print(f"    Already exlpored, go back more")
                 target_id = check_id
-                back_ptr = RollBack(target_id, check_ptr, Paths)
+                back_ptr = RollBack(target_id, check_ptr, ptr, Paths)
                 back_node_id = Paths[back_ptr][0]
                 print(f"    This node {back_node_id} is roll back node")
                 return back_ptr
@@ -196,9 +199,9 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
                 index += 1
                 addr = Paths[index][1]
                 print(f"  go next from index={index-1} to index={index}, addr={addr}")
-                if len(Paths[index][2]) <= addr:
+                if len(Paths[index][2]) <= (addr+1):
                     target_id = Paths[index][2][len(Paths[index][2])-1]
-                    check_ptr = RollBack(target_id, index, Paths)
+                    check_ptr = RollBack(target_id, index, ptr, Paths)
                     Paths[check_ptr][1] += 1
                     addr = Paths[check_ptr][1]
                     print(f"    tmp_ptr={tmp_ptr} : check_ptr={check_ptr} and addr={Paths[check_ptr][1]}")
@@ -215,11 +218,18 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
             # Get Neighbor Node's ID
             NNodes = Get_Neighbors( nnode_id, am_size, am, prev_ptr )
             if (len(NNodes) > 0 and [nnode_id, 0, NNodes] not in Paths) or len(Paths) == 1:
-                Paths.append([nnode_id, 0, NNodes])
-                ptr = len(Paths) - 1
+                if len(Paths) == 1:
+                    NNodes[0:0] = [-1]
+                    NNodes.pop(1)
+
+            Paths.append([nnode_id, 0, NNodes])
+            ptr = len(Paths) - 1
             #ToDo
-            #if len(Paths) > 1 and len(Paths[ptr][2]) > 1:
-            #    addr = 1
+            if prev_ptr == Paths[ptr][2][0] or Paths[ptr][2][0] == -1:
+                Paths[ptr][1] += 1
+                addr = 1
+            else:
+                addr = 0
 
         count += 1
 
