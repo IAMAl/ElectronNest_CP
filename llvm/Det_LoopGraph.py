@@ -110,6 +110,14 @@ def is_Loop( ptr, addr, Paths ):
     return Find, 0
 
 
+def is_Empty( Paths ):
+    for path in Paths:
+        if len(path[2]) > 0:
+            return False
+
+    return True
+
+
 def RollBack(target_id, ptr, Paths):
 
     for check_ptr in range(ptr, -1,-1):
@@ -142,17 +150,17 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
 
     Loops = []
     Paths = []
-    ptr = 0
-    addr = 0
+
     nnode_id = 0
-    Find = False
+
+    ptr = 0
     index = 0
-    stack = []
+    addr = 0
+    Find = False
 
     # Get Neighbor Node's ID
     NNodes = Get_Neighbors( ptr, am_size, am, ptr )
     Paths.append([ptr, 0, NNodes])
-    stack.append(ptr)
 
     while not is_Empty(Paths) and count < 50:
 
@@ -199,7 +207,6 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
             index = tmp_ptr
             addr = Paths[ptr][1]
 
-
         else:
             prev_ptr = ptr
             addr = 0
@@ -208,8 +215,6 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
             if (len(NNodes) > 0 and [nnode_id, 0, NNodes] not in Paths) or len(Paths) == 1:
                 Paths.append([nnode_id, 0, NNodes])
                 ptr = len(Paths) - 1
-                stack.append(ptr)
-                #print(stack)
 
 
         count += 1
