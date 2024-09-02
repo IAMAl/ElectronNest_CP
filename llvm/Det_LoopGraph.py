@@ -110,9 +110,9 @@ def is_Loop( ptr, addr, Paths ):
     return Find, 0
 
 
-def is_Empty( Paths ):
+def is_NotTerm( Paths ):
     for path in Paths:
-        if len(path[2]) > 0:
+        if len(path[2]) > (path[1]+1):
             return False
 
     return True
@@ -162,7 +162,7 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
     NNodes = Get_Neighbors( ptr, am_size, am, ptr )
     Paths.append([ptr, 0, NNodes])
 
-    while not is_Empty(Paths) and count < 50:
+    while not is_NotTerm(Paths) and count < 50:
 
         print(f"Paths = {Paths}")
         print(f"  ptr = {ptr}, addr = {addr}, index = {index}")
@@ -199,6 +199,8 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
                 if len(Paths[index][2]) <= addr:
                     target_id = Paths[index][2][len(Paths[index][2])-1]
                     check_ptr = RollBack(target_id, index, Paths)
+                    Paths[check_ptr][1] += 1
+                    addr = Paths[check_ptr][1]
                     print(f"    tmp_ptr={tmp_ptr} : check_ptr={check_ptr} and addr={Paths[check_ptr][1]}")
                     tmp_ptr = check_ptr
 
@@ -215,7 +217,9 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
             if (len(NNodes) > 0 and [nnode_id, 0, NNodes] not in Paths) or len(Paths) == 1:
                 Paths.append([nnode_id, 0, NNodes])
                 ptr = len(Paths) - 1
-
+            #ToDo
+            #if len(Paths) > 1 and len(Paths[ptr][2]) > 1:
+            #    addr = 1
 
         count += 1
 
