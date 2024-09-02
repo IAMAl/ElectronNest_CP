@@ -110,54 +110,6 @@ def is_Loop( ptr, addr, Paths ):
     return Find, 0
 
 
-def is_Empty( Paths ):
-    for path in Paths:
-        if len(path[2]) > 0:
-            return False
-
-    return True
-
-
-def GetIndex( next_id, Paths ):
-
-    for no, path in enumerate(Paths):
-        if path[0] == next_id:
-            return no
-
-    print(f"No Next-ID for Node-{next_id}")
-    return -1
-
-import copy
-
-def Remove_Node( ptr, index,  Paths, stack ):
-
-    target_idx = index
-    next_id = ptr
-    path = []
-
-    while len(stack) > 0:
-
-        path.append(Paths[next_id][0])
-        pres_id = Paths[next_id][0]
-
-        if next_id == target_idx:
-            # End Remove
-            return Paths, path, stack
-
-        if Paths[next_id][1] == (len(Paths[next_id][2])-1):
-            del Paths[next_id]
-            print(f"Node-{pres_id} is removed")
-
-    return Paths, path, stack
-
-def NextIndex(index, Paths):
-    next_index = index
-    if index < (len(Paths)-1):
-        if Paths[index][1] >= (len(Paths[index][2])-1):
-            next_index = NextIndex(index+1, Paths)
-
-    return next_index
-
 def RollBack(target_id, ptr, Paths):
 
     for check_ptr in range(ptr, -1,-1):
