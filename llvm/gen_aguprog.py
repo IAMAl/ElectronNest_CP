@@ -32,12 +32,12 @@ w_file_path = args.w_name
 
 
 # Read Loop Paths in Control-Flow Graph
-r_cfg_file_name = name+"_cfg_loop.txt"
 cfg_paths = fileutils.ReadFile(file_path=r_file_path, file_name=r_file_name)
 CyclicPaths = graphutils.NodeParser( cfg_paths, 'cfg' )
 
 # Read Data-Flow Graphs and their Node Lists
 # Compose CFG_Nodes Object
+r_cfg_file_name = name+"_loop.txt"
 CFG_Nodes = Gen_AGUProg.Preprocess( r_file_path, r_cfg_file_name, CyclicPaths )
 
 CFGNodes = []

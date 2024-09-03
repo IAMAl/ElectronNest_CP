@@ -38,7 +38,6 @@ for index in range(len(am)):
 edgetab = graphutils.EdgeTab(am_size)
 
 CyclicEdges = Det_LoopGraph.CycleDetector( am_size=am_size, am=am, nodes=nodes, edgetab=edgetab)
-CyclicEdges = Det_LoopGraph.RemoveCycles(CyclicEdges)
 CyclicEdges = Det_LoopGraph.TranslateNode(r_file_name=r_file_name, CyclicEdges=CyclicEdges)
 
 if len(CyclicEdges) > 0:

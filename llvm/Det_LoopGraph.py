@@ -11,38 +11,6 @@
 import utils.GraphUtils as graphutils
 
 
-def RemoveCycles(CyclicEdges):
-    CyclicEdges_ = []
-    index = 0
-    offset = 0
-    length = len(CyclicEdges)
-    prev_cycle = []
-    if length > 1:
-        while True:
-
-            index += 1
-            if (offset+index) == length:
-                break
-
-            cycle = CyclicEdges.pop(0)
-            for idx in range(length-offset-index-1):
-                check_cycle = CyclicEdges[idx-offset]
-
-                if len(check_cycle) == len(cycle):
-                    for count in range(len(cycle)):
-                        print("Check {} and {}".format(check_cycle, cycle))
-                        if check_cycle == cycle and prev_cycle != cycle:
-                            prev_cycle = cycle
-                            CyclicEdges_.append(cycle)
-                            CyclicEdges.pop(idx-offset)
-                            offset += 1
-                            print("idx:{} offset:{} for {}".format(idx, offset, cycle))
-                        else:
-                            check_cycle = check_cycle[1:]+check_cycle[:1]
-
-    return CyclicEdges_
-
-
 def ReadNodeList(r_file_name):
 
     r_node_list_file_name = r_file_name+"_node_list.txt"
@@ -63,14 +31,15 @@ def ReadNodeList(r_file_name):
 def TranslateNode(r_file_name, CyclicEdges):
 
     node_list = ReadNodeList(r_file_name)
+    #print(f"node_list:{node_list}")
 
     CyclicEdges_ = []
     for cycle_path in CyclicEdges:
         path = []
         for node_no in cycle_path:
             for node in node_list:
-                if node[0] in str(node_no):
-                    print("Checked: {}({}) == {}".format(node[0], node[1], node_no))
+                if node[0] == str(node_no):
+                    print("  Checked: Node-{}( BBlock-{} ) == Node-{}".format(node[0], node[1], node_no))
                     node_id = node[1]
                     path.append(node_id)
                     break
@@ -104,9 +73,6 @@ def is_Loop( ptr, addr, Paths ):
         for index in range(len(Paths)-1):
             nnode_id = Paths[index][0]
 
-            #print(f">>>> Check Node-{nnode_id}, index={index}")
-
-            #print(f">>>>>> Check node-{check_node_id} with node-{nnode_id}")
             if check_node_id == nnode_id:
                 return True, index
 
@@ -115,6 +81,7 @@ def is_Loop( ptr, addr, Paths ):
 
 def is_NotTerm( Paths ):
     for path in Paths:
+        #print(f">>>> len(path[2]) : {len(path[2]) } > path[1] : {path[1]+1}")
         if len(path[2]) > (path[1]+1):
             return False
 
@@ -130,29 +97,62 @@ def RollBack(target_id, ptr, prev_ptr, Paths):
         check_len = len(check_srcs)
 
         if target_id in check_srcs:
-            print(f"    Found target node {target_id}: compare {len(check_srcs)} and {check_addr+1}")
+            #print(f"    Found target node {target_id}: compare {len(check_srcs)} and {check_addr+1}")
             if len(check_srcs) <= (check_addr+1):
-                print(f"    Already exlpored, go back more")
+                #print(f"    Already exlpored, go back more")
                 target_id = check_id
                 back_ptr = RollBack(target_id, check_ptr, ptr, Paths)
                 back_node_id = Paths[back_ptr][0]
-                print(f"    This node {back_node_id} is roll back node")
+                #print(f"    This node {back_node_id} is roll back node")
                 return back_ptr
             else:
                 back_node_id = Paths[check_ptr][0]
-                print(f"    This node {back_node_id} is roll back node")
+                #print(f"    This node {back_node_id} is roll back node")
                 return check_ptr
 
         # roll back more
 
     return ptr
 
-def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
 
-    count = 0
+def GetPtr( node_id, Paths ):
+    for index, path in enumerate( Paths ):
+        if path[0] == node_id:
+            return index
+
+    return -1
+
+
+def GetPath( node_id1, node_id2, PathStack ):
+    #print(f"PathStack:{PathStack}, node_id1:{node_id1}, node_id2:{node_id2}")
+    if node_id1 in PathStack:
+        if node_id2 in PathStack:
+            index1 = PathStack.index( node_id1 )
+            index2 = PathStack.index( node_id2 )
+
+            if index1 < index2:
+                start_index = index1
+                end_index = index2 + 1
+            else:
+                start_index = index2
+                end_index = index1 + 1
+
+            path = PathStack[start_index:end_index]
+            #print(f"path:{path}")
+            return path
+
+    return []
+
+
+def GetNNodes( index, Paths ):
+    return Paths[index][2]
+
+
+def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
 
     Loops = []
     Paths = []
+    PathStack = []
 
     nnode_id = 0
 
@@ -165,14 +165,21 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
     NNodes = Get_Neighbors( ptr, am_size, am, ptr )
     Paths.append([ptr, 0, NNodes])
 
-    while not is_NotTerm(Paths) and count < 50:
+    while not is_NotTerm(Paths):
 
-        print(f"Paths = {Paths}")
-        print(f"  ptr = {ptr}, addr = {addr}, index = {index}")
+        #print(f"Paths = {Paths}")
+        #print(f"  ptr = {ptr}, addr = {addr}, index = {index}")
 
         nnode_id = Paths[ptr][2][addr]
         print(f"  Check Neighbor Node-{nnode_id} for Node-{Paths[ptr][0]}")
+
+        # Loop-Check
         Find, index = is_Loop( ptr, addr, Paths )
+
+        # Case of Initial Iteration
+        if len(Paths) == 1:
+            Paths[ptr][1] += 1
+
         neighbor_id = Paths[index][0]
 
         if Find:
@@ -181,57 +188,85 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
             Paths[ptr][1] += 1
 
             # Collecting Path Nodes
-            reg_id = Paths[ptr][0]
             loop = []
-            loop.append(nnode_id)
-            loop.append(reg_id)
-            print(f"  loop = {loop}, index = {index}")
-            Loops.append(loop)
+            NNodes_ptr = GetNNodes( ptr, Paths )
+            NNodes_index = GetNNodes( index, Paths )
+
+            # Get Intermediate Node-IDs on the Loop
+            IPaths = []
+            smallest_ptr = index
+            for nnode_ptr_id in NNodes_ptr:
+                ptr_id_ptr = GetPtr( nnode_ptr_id, Paths )
+
+                for nnode_index_id in NNodes_index:
+                    index_id_ptr = GetPtr( nnode_index_id, Paths )
+
+                    if index_id_ptr >= ptr_id_ptr and index_id_ptr != ptr and ptr_id_ptr != index:
+                        path = GetPath( nnode_ptr_id, nnode_index_id, PathStack )
+                        IPaths.append( path )
+                        if ptr_id_ptr <= smallest_ptr:
+                            smallest_ptr = ptr_id_ptr
+
+            # Register Loops
+            for ipath in IPaths:
+                loop = ipath
+                loop.append( Paths[index][0] )
+                loop.append( Paths[ptr][0] )
+                Loops.append(loop)
 
             # Update address
             tmp_addr = addr
             addr = 1 + Paths[index][1]
             Paths[index][1] = addr
-            print(f"  addr: before[{tmp_addr}] after[{addr}]")
 
-            tmp_ptr = ptr
+            index = smallest_ptr
+
+            # Roll-back when the index reaches already explored node
+            tmp_ptr = index
             if (1 + Paths[index][1]) >= len(Paths[index][2]):
-                index += 1
-                addr = Paths[index][1]
-                print(f"  go next from index={index-1} to index={index}, addr={addr}")
-                if len(Paths[index][2]) <= (addr+1):
-                    target_id = Paths[index][2][len(Paths[index][2])-1]
-                    check_ptr = RollBack(target_id, index, ptr, Paths)
-                    Paths[check_ptr][1] += 1
-                    addr = Paths[check_ptr][1]
-                    print(f"    tmp_ptr={tmp_ptr} : check_ptr={check_ptr} and addr={Paths[check_ptr][1]}")
-                    tmp_ptr = check_ptr
+                target_id = Paths[index][2][-1]
+                check_ptr = RollBack(target_id, index, ptr, Paths)
+                print(f"    Node-{Paths[check_ptr][0]} is roll back node")
+                tmp_ptr = check_ptr
 
             prev_ptr = ptr
             ptr = tmp_ptr
             index = tmp_ptr
-            addr = Paths[ptr][1]
+            addr = Paths[tmp_ptr][1]
 
         else:
             prev_ptr = ptr
-            addr = 0
+            prev_id = Paths[ptr][0]
+
             # Get Neighbor Node's ID
             NNodes = Get_Neighbors( nnode_id, am_size, am, prev_ptr )
-            if (len(NNodes) > 0 and [nnode_id, 0, NNodes] not in Paths) or len(Paths) == 1:
-                if len(Paths) == 1:
-                    NNodes[0:0] = [-1]
-                    NNodes.pop(1)
+            if (len(NNodes) > 0 and [nnode_id, 0, NNodes] not in Paths) and len(Paths) == 1:
+                NNodes[0:0] = [-1]
+                NNodes.pop(1)
 
+            # Register Node
+            # format: [Node-ID, Pointer, [Neighbor Node-IDs]]
             Paths.append([nnode_id, 0, NNodes])
             ptr = len(Paths) - 1
-            #ToDo
-            if prev_ptr == Paths[ptr][2][0] or Paths[ptr][2][0] == -1:
+            
+            # Increment Pointer of Explored Node
+            Paths[prev_ptr][1] += 1
+            
+            if (len(Paths[ptr][2]) > 0) and ( prev_id in Paths[ptr][2] or Paths[ptr][2][0] == -1):
                 Paths[ptr][1] += 1
                 addr = 1
             else:
                 addr = 0
 
-        count += 1
+            if len(Paths[ptr][2]) == 0:
+                ptr = prev_ptr
+                addr = Paths[ptr][1]
 
-    print(Loops)
+            # Register Explored Node-ID in Stack
+            PathStack.append( prev_id )
+
+    if len(Loops) > 0:
+        print(f"loops are detected: {Loops}")
+    else:
+        print(f"NO loop is detected")
     return Loops
