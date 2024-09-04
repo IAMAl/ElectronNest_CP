@@ -4,7 +4,7 @@
 ### License: AGPL
 
 
-### Assember for Electron Nest
+### Assembler for Electron Nest
 
 - "asm" directory
 
