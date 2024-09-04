@@ -17,7 +17,7 @@ SystemVerilog and testbenches: https://github.com/IAMAl/ElectronNest_SV
 <div align="center">
   <img src="https://github.com/IAMAl/ElectronNest_CP/blob/main/workflow_cgra.png"
        alt="HTML image alt text"
-       title="全体構成（左）とTPUの構成（右）"
+       title="Workflow for Generating Address Generation Program"
        width="550px"
   />
 </div>
