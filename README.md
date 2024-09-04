@@ -13,13 +13,23 @@ SystemVerilog and testbenches: https://github.com/IAMAl/ElectronNest_SV
 
 ### CGRA Compiler Backend
 
+
+<div align="center">
+  <img src="https://github.com/IAMAl/ElectronNest_CP/blob/main/workflow_cgra.png"
+       alt="HTML image alt text"
+       title="全体構成（左）とTPUの構成（右）"
+       width="550px"
+  />
+</div>
+
 - "llvm" directory
 - input: LLVM IR file
 - output: LLVM IR file (address generation program)
 
+
 #### 1. Generating Control-Flow and Data-Flow Graphs
 
-- pyrhon gen_graph.py --src_name=your_source_llvm_ir_file_name --genn_type=select_cft_dfg_cdfg
+- pyrhon gen_graph.py --src_name=your_source_llvm_ir_file_name --gen_type=select_cft_dfg_cdfg
 - input: LLVM IR (.ll) file
 - output: Graphviz format (dot file)
 
