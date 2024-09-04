@@ -21,7 +21,7 @@ parser.add_argument('--w_path',     help='gened file path',         default='.')
 parser.add_argument('--src_name',   help='source file name',        required=True)
 parser.add_argument('--zero_rm',    help='block: yes/no',           default='yes')
 parser.add_argument('--dst_append', help='mnemonic mode: yes/no',   default='yes')
-parser.add_argument('--gen_am',     help='gen cfg/dfg',             default='dfg')
+parser.add_argument('--gen_type',   help='gen cfg/dfg',             default='dfg')
 
 args = parser.parse_args()
 
@@ -33,7 +33,7 @@ w_file_path = args.w_path
 ZERO_REMOVE = True
 DST_APPEND  = True
 GEN_DFG     = True
-if 'cfg' == args.gen_am:
+if 'cfg' == args.gen_type:
     GEN_DFG     = False
 
 if 'no' == args.zero_rm:
