@@ -7,6 +7,8 @@
 ##	version 3.0
 ##
 ##################################################################
+import copy
+
 
 class Node:
     def __init__(self, am, am_size, index):

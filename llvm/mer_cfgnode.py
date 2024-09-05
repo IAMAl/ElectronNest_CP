@@ -8,7 +8,7 @@
 ##
 ##################################################################
 
-import MergeCFGNodes
+import funcs.MergeCFGNodes as MergeCFGNodes
 import argparse
 
 open('utils/__init__.py', 'a').close()

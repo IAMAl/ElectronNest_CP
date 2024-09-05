@@ -10,7 +10,7 @@
 
 import utils.FileUtils as fileutils
 import utils.GraphUtils as graphutils
-import Gen_AGUProg
+import funcs.Gen_AGUProg as Gen_AGUProg
 import argparse
 
 open('utils/__init__.py', 'a').close()
@@ -28,17 +28,18 @@ args = parser.parse_args()
 r_file_path = args.src_path
 r_file_name = args.src_name
 name        = args.cfg_name
-w_file_path = args.w_name
+w_file_path = args.w_path
 
 
 # Read Loop Paths in Control-Flow Graph
-cfg_paths = fileutils.ReadFile(file_path=r_file_path, file_name=r_file_name)
+r_cfg_file_name = name+"_loop.txt"
+cfg_paths = fileutils.ReadFile(file_path=r_file_path, file_name=r_cfg_file_name)
 CyclicPaths = graphutils.NodeParser( cfg_paths, 'cfg' )
 
 # Read Data-Flow Graphs and their Node Lists
 # Compose CFG_Nodes Object
-r_cfg_file_name = name+"_loop.txt"
-CFG_Nodes = Gen_AGUProg.Preprocess( r_file_path, r_cfg_file_name, CyclicPaths )
+r_file_name = r_file_name
+CFG_Nodes = Gen_AGUProg.Preprocess( r_file_path, r_file_name, CyclicPaths )
 
 CFGNodes = []
 for index in range(len(CFG_Nodes)-1, -1, -1):
@@ -46,6 +47,7 @@ for index in range(len(CFG_Nodes)-1, -1, -1):
     CFGNodes.append(CFG_Nodes[index])
 
 # Tracking
+print(f"BackTrack")
 path = Gen_AGUProg.BackTrack(CFGNodes)
 
 print(path)

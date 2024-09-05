@@ -10,7 +10,7 @@
 
 import utils.AMUtils as amutils
 import utils.GraphUtils as graphutils
-import Det_LoopGraph
+import funcs.Det_LoopGraph as Det_LoopGraph
 import argparse
 
 open('utils/__init__.py', 'a').close()

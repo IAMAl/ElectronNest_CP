@@ -9,7 +9,7 @@
 ##################################################################
 
 import utils.FileUtils as fileutils
-import Gen_AMtoPath
+import funcs.Gen_AMtoPath as Gen_AMtoPath
 import argparse
 
 open('utils/__init__.py', 'a').close()

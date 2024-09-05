@@ -12,16 +12,16 @@ import utils.GraphUtils as graphutils
 import utils.FileUtils as fileutils
 
 
-def ReadDFG( r_file_path="./", r_file_name="mvm", cfg_node_id="1"):
+def ReadDFG( r_file_path="./", r_file_name="mvm", dfg_node_id="1"):
     """
     Read Data-Flow Graph and its Node List
     """
-    r_path_file_name = r_file_name+"_"+cfg_node_id+"_bpath_st.txt"
+    r_path_file_name = r_file_name+"_"+dfg_node_id+"_bpath_st_root.txt"
     dfg_paths = fileutils.ReadFile(file_path=r_file_path, file_name=r_path_file_name )
     DFG_Paths = graphutils.NodeParser( dfg_paths, 'dfg' )
     print("    DFG Paths:{}".format(DFG_Paths))
 
-    r_node_list_file_name = r_file_name+"_"+cfg_node_id+"_node_list.txt"
+    r_node_list_file_name = r_file_name+"_"+dfg_node_id+"_node_list.txt"
     dfg_node_list = fileutils.ReadFile(file_path=r_file_path, file_name=r_node_list_file_name )
     DFG_Node_List = graphutils.NodeParser( dfg_node_list, 'dfg' )
     print("    DFG Node List:{}".format(DFG_Node_List))
@@ -59,7 +59,7 @@ def ReadIndex( DFG_Path, DFG_Node_List ):
                     if not "%" in st_index2:
                         st_index2 = -1
 
-                    st_index.append(int(st_index2[1:]))
+                    st_index.append(st_index2)
 
                 cnt_st += 1
 
@@ -161,7 +161,7 @@ def Preprocess( r_file_path, r_file_name, CyclicPaths ):
 
             # Read This Block's DFG Paths
             print("  Read DFG for CFG Node-{}".format(node_A_id))
-            DFG_paths, node_list = ReadDFG(r_file_path=r_file_path, r_file_name=r_file_name, cfg_node_id=node_A_id)
+            DFG_paths, node_list = ReadDFG(r_file_path=r_file_path, r_file_name=r_file_name, dfg_node_id=node_A_id)
 
             # Set Store-Load Path if available
             if isinstance(DFG_paths, list) and len(DFG_paths) > 0:
@@ -336,8 +336,13 @@ def BackTrack(CFG_Nodes):
             Node_Ptr = 0
         else:
             print("Read Remained Node: {}".format(CFGNode_A.ReadNodeID()))
+            #Cont = False
+
+        #if Cont:
+        print(f">>>> PathPicker")
         path = PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, 1, 0)
         Node_Ptr += 1
         Path.append(path)
+        print(f">>>> {Path}")
 
     return Path

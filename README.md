@@ -74,11 +74,11 @@ SystemVerilog and testbenches: https://github.com/IAMAl/ElectronNest_SV
 - format=[yes/no]: parsing LLVM IR file to work, default "no"
 
 
-#### 4. Merging Nodes in Control-Flow Graph (Under Testing)
+#### 4. Merging Nodes in Control-Flow Graph
 
 - python mer_cfgnode.py --src_name=source_cfg_file_name
 - input: LLVM IR (.ll) file
-- output: merged LLVM IR file
+- output: merged LLVM IR file (text file)
 
 ##### Options
 

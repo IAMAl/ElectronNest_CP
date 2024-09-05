@@ -281,7 +281,7 @@ def Main_Gen_LLVMtoDFG( prog, w_file_path ):
 
     with open(w_file_path+"/"+prog.name + "_dfg_o.dot", "w") as out:
         # Graph Utilities
-        g = drawutils.drawutils(out)
+        g = drawutils.GraphUtils(out)
 
         # Graph Header Description
         g.start_df_graph()

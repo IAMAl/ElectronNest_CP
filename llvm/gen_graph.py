@@ -10,8 +10,8 @@
 
 import utils.IRPaser as irparser
 import utils.FileUtils as progfile
-import Gen_LLVMtoDFG
-import Gen_LLVMtoCFG
+import funcs.Gen_LLVMtoDFG as Gen_LLVMtoDFG
+import funcs.Gen_LLVMtoCFG as Gen_LLVMtoCFG
 import argparse
 
 open('utils/__init__.py', 'a').close()
