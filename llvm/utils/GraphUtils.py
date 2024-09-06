@@ -10,6 +10,22 @@
 import copy
 
 
+def ReadNodeList(r_file_name):
+
+    r_node_list_file_name = r_file_name+"_node_list.txt"
+    node_list = []
+    with open(r_node_list_file_name, "r") as list:
+        for line in list:
+            line_ = []
+            line = line.split(" ")
+            for item in line:
+                item = item.replace('\n', '')
+                line_.append(item)
+
+            node_list.append(line_)
+
+    return  node_list
+
 class Node:
     def __init__(self, am, am_size, index):
         self.NodeID = index

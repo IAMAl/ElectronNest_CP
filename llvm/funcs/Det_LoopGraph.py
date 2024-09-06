@@ -11,26 +11,9 @@
 import utils.GraphUtils as graphutils
 
 
-def ReadNodeList(r_file_name):
-
-    r_node_list_file_name = r_file_name+"_node_list.txt"
-    node_list = []
-    with open(r_node_list_file_name, "r") as list:
-        for line in list:
-            line_ = []
-            line = line.split(" ")
-            for item in line:
-                item = item.replace('\n', '')
-                line_.append(item)
-
-            node_list.append(line_)
-
-    return  node_list
-
-
 def TranslateNode(r_file_name, CyclicEdges):
 
-    node_list = ReadNodeList(r_file_name)
+    node_list = graphutils.ReadNodeList(r_file_name)
     #print(f"node_list:{node_list}")
 
     CyclicEdges_ = []
