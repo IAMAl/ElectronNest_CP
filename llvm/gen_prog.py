@@ -10,7 +10,7 @@
 
 import utils.FileUtils as fileutils
 import utils.GraphUtils as graphutils
-import funcs.Gen_AGUProg as Gen_AGUProg
+import funcs.Gen_Prog as Gen_Prog
 import argparse
 
 open('utils/__init__.py', 'a').close()
@@ -39,7 +39,7 @@ CyclicPaths = graphutils.NodeParser( cfg_paths, 'cfg' )
 # Read Data-Flow Graphs and their Node Lists
 # Compose CFG_Nodes Object
 r_file_name = r_file_name
-CFG_Nodes = Gen_AGUProg.Preprocess( r_file_path, r_file_name, CyclicPaths )
+CFG_Nodes = Gen_Prog.Preprocess( r_file_path, r_file_name, CyclicPaths )
 
 CFGNodes = []
 for index in range(len(CFG_Nodes)-1, -1, -1):
@@ -48,7 +48,7 @@ for index in range(len(CFG_Nodes)-1, -1, -1):
 
 # Tracking
 print(f"BackTrack")
-path = Gen_AGUProg.BackTrack(CFGNodes)
+path = Gen_Prog.BackTrack(CFGNodes)
 
 print(path)
 
