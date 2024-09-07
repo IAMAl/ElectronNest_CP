@@ -94,7 +94,7 @@ def is_StNode( mnemonic ):
 
 
 def is_LdNode( mnemonic ):
-    return 'st' in mnemonic
+    return 'ld' in mnemonic
 
 
 def is_LeafNode( NodeList, index ):

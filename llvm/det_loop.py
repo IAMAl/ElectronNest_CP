@@ -10,7 +10,7 @@
 
 import utils.AMUtils as amutils
 import utils.GraphUtils as graphutils
-import funcs.Det_LoopGraph as Det_LoopGraph
+import funcs.Det_Loop as Det_Loop
 import argparse
 
 open('utils/__init__.py', 'a').close()
@@ -37,8 +37,8 @@ for index in range(len(am)):
 
 edgetab = graphutils.EdgeTab(am_size)
 
-CyclicEdges = Det_LoopGraph.CycleDetector( am_size=am_size, am=am, nodes=nodes, edgetab=edgetab)
-CyclicEdges = Det_LoopGraph.TranslateNode(r_file_name=r_file_name, CyclicEdges=CyclicEdges)
+CyclicEdges = Det_Loop.CycleDetector( am_size=am_size, am=am, nodes=nodes, edgetab=edgetab)
+CyclicEdges = Det_Loop.TranslateNode(r_file_name=r_file_name, CyclicEdges=CyclicEdges)
 
 if len(CyclicEdges) > 0:
     print("Cycle: {} in Graph {}".format(CyclicEdges, r_file_name))
