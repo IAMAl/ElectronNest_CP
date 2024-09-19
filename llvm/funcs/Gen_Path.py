@@ -113,7 +113,7 @@ def GetMnemonic( NodeList, index )
     return NodeList[ index ]
 
 
-def Eplore_Path( am, NodeList, path ):
+def Explore_Path( am, NodeList, path ):
 
     TotalNumNodes = len( am[0] )
     PtrList = np.zeros( TotalNumNodes )
@@ -195,7 +195,7 @@ def Eplore_Path( am, NodeList, path ):
             start_ld = False
             ld_ld_path.append( index )
             ld_leaf_path.append( index )
-            path.Register( 'ld_ls_path', ld_ld_path )
+            path.Register( 'ld_ld_path', ld_ld_path )
             ld_ld_path = []
 
             CountNodes += 1
@@ -269,7 +269,7 @@ def Eplore_Path( am, NodeList, path ):
 
 def Gen_Path( am, NodeList, w_path, w_name ):
     path = Path()
-    path_ = Eplore_Path( am, NodeList, path )
+    path_ = Explore_Path( am, NodeList, path )
     
     w_path_name = w_path+'/'+w_name+"_bpath_st_root.txt"
     with open(w_path_name, "w") as st_bpath:

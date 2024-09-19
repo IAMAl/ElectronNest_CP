@@ -11,7 +11,7 @@
 import utils.FileUtils as fileutils
 import utils.AMUtils as amutils
 import utils.GraphUtils as graphutils
-import funcs.Gen_Path as Gen_Path
+import funcs.Gen_Path as genpath
 import argparse
 
 open('utils/__init__.py', 'a').close()
@@ -41,4 +41,4 @@ for func in prog.funcs:
         NodeList = graphutils.ReadNodeList(r_file_name)
 
         w_file_name = name_func+"_bblock_"+name_bblock
-        Gen_Path( am, NodeList, w_file_path, w_file_name )
+        genpath.Gen_Path( am, NodeList, w_file_path, w_file_name )
