@@ -10,8 +10,8 @@
 
 import utils.IRPaser as irparser
 import utils.FileUtils as progfile
-import funcs.Gen_LLVMtoDFG as Gen_LLVMtoDFG
-import funcs.Gen_LLVMtoCFG as Gen_LLVMtoCFG
+import funcs.Gen_DFG as Gen_DFG
+import funcs.Gen_CFG as Gen_CFG
 import argparse
 
 open('utils/__init__.py', 'a').close()
@@ -40,15 +40,15 @@ if 'no' == args.unique_id:
     UNIQUE_ID       = False
 
 
-Gen_DFG     = False
-Gen_CFG     = False
+Gen_DFGraph     = False
+Gen_CFGraph     = False
 if 'cdfg' == args.gen_type:
-    Gen_DFG     = True
-    Gen_CFG     = True
+    Gen_DFGraph     = True
+    Gen_CFGraph     = True
 elif 'dfg' == args.gen_type:
-    Gen_DFG     = True
+    Gen_DFGraph     = True
 elif 'cfg' == args.gen_type:
-    Gen_CFG     = True
+    Gen_CFGraph     = True
 
 
 r_file_path = args.src_path
@@ -66,11 +66,11 @@ prog = irparser.IR_Parser( r_file_path, r_file_name )
 if 'yes' == args.parse:
     progfile.ProgWriter( prog, w_file_path, w_file_name )
 
-if Gen_DFG and 'no' == args.block:
-    Gen_LLVMtoDFG.Main_Gen_LLVMtoDFG( prog, w_file_path )
+if Gen_DFGraph and 'no' == args.block:
+    Gen_DFG.Main_Gen_LLVMtoDFG( prog, w_file_path )
 
-if Gen_DFG and 'yes' == args.block:
-    Gen_LLVMtoDFG.BlockDataFlowExtractor( prog, MNEMONIC_MODE, UNIQUE_ID )
+if Gen_DFGraph and 'yes' == args.block:
+    Gen_DFG.BlockDataFlowExtractor( prog, MNEMONIC_MODE, UNIQUE_ID )
 
-if Gen_CFG:
-    Gen_LLVMtoCFG.Main_Gen_LLVMtoCFG( prog, w_file_path )
+if Gen_CFGraph:
+    Gen_CFG.Main_Gen_LLVMtoCFG( prog, w_file_path )
