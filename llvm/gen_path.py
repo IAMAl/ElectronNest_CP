@@ -37,8 +37,9 @@ for func in prog.funcs:
     for bblock in func.bblocks:
         name_bblock = bblock.name.replace('\n', '')
         r_file_name = name_func+"_bblock_"+name_bblock
-        am_size, am = amutils.Preprocess( r_file_path, r_file_name )
-        NodeList = graphutils.ReadNodeList(r_file_name)
+        if '54' in name_bblock:
+            am_size, am = amutils.Preprocess( r_file_path, r_file_name )
+            NodeList = graphutils.ReadNodeList(r_file_name)
 
-        w_file_name = name_func+"_bblock_"+name_bblock
-        genpath.Gen_Path( am, NodeList, w_file_path, w_file_name )
+            w_file_name = name_func+"_bblock_"+name_bblock
+            genpath.Gen_Path( am, NodeList, w_file_path, w_file_name )

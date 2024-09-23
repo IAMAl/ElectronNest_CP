@@ -21,9 +21,6 @@ class Path:
         self.Branch_St = []
         self.Branch_Ld = []
 
-        self.StPath = []
-        self.LdPath = []
-
         self.Branch = []
 
     def Register( self, path_select, path ):
@@ -63,12 +60,6 @@ class Path:
 
     def Set_BranchLdNode( self, index ):
         self.Branch_Ld.append( index )
-
-    def Set_StPath( self, index ):
-        self.StPath.append( index )
-
-    def Set_LdPath( self, index ):
-        self.LdPath.append( index )
 
     def Push( self, index ):
         self.Branch.append( index )
@@ -130,35 +121,48 @@ def GetNonExploredNodes( am, em ):
     return NodeList
 
 
+def is_ParentNodeExist( NNodes, index ):
+    count = 0
+    for node in NNodes:
+        if node < index:
+            count += 1
+
+    return count
+
+
 def Explore_Path( am, NodeList, path ):
 
     TotalNumNodes = len( am[0] )
     PtrList = np.zeros( TotalNumNodes, dtype=int )
     em = np.zeros((TotalNumNodes, TotalNumNodes), dtype=int)
 
-    index = 0
-
+    # Counter
+    #   count number of nodes arrived
     CountNodes = 0
 
-    StPath = []
+    Discon = False
+
+    # Store instruction related path lists
     st_ld_path = []
     st_route_path = []
     st_leaf_path = []
 
-    LdPath = []
+    # Load instruction related path lists
     ld_ld_path = []
     ld_leaf_path = []
 
+    # Path event flags
     start_st = False
     start_ld = False
 
+    # Branch node stack
     Branch = []
-    BR_Popped = False
 
-    popped = False
-    Discon = False
+    # Node ID (index of Adjacency Matrix)
+    index = 0
+    tmp_index = 0
 
-    while CountNodes < TotalNumNodes and not Discon:
+    while CountNodes <= TotalNumNodes and not Discon:
         if CountNodes > 0 and len(nlist) == 0:
             Discon = True
 
@@ -172,7 +176,7 @@ def Explore_Path( am, NodeList, path ):
         mnemonic = GetMnemonic( NodeList, index )
 
         print(f"NNodes:{NNodes}  mnemonic:{mnemonic}")
-        
+
         br = False
 
         if not is_LeafNode( mnemonic, index ):
@@ -182,16 +186,12 @@ def Explore_Path( am, NodeList, path ):
                 br = True
 
             # Register  arriving the branch node
-            if len(NNodes) >= 2 and index not in Branch:
+            if ( len(NNodes) - is_ParentNodeExist( NNodes, index ) ) >= 2 and PtrList[ index ] < 1:
                 Branch.append( index )
                 print(f"Branch: {Branch}")
 
-            if not  popped:
-                CountNodes += 1
-            
-            popped = False
+            CountNodes += 1
             tmp_index = index
-            
 
             if is_StNode( mnemonic ) and not start_st:
                 # Node is first store instruction
@@ -199,7 +199,8 @@ def Explore_Path( am, NodeList, path ):
                 path.StPush( index )
 
                 # Register Path Node
-                st_ld_path.append( index )
+                if not start_ld:
+                    st_ld_path.append( index )
                 st_route_path.append( index )
                 st_leaf_path.append( index )
 
@@ -210,7 +211,8 @@ def Explore_Path( am, NodeList, path ):
                 path.StPush( index )
 
                 # Register Path Node
-                st_ld_path.append( index )
+                if not start_ld:
+                    st_ld_path.append( index )
                 st_route_path.append( index )
                 st_leaf_path.append( index )
 
@@ -242,14 +244,10 @@ def Explore_Path( am, NodeList, path ):
                 path.LdPush( index )
 
                 if start_st:
-                    StPath.append( index )
-                    st_ld_path.append( index )
                     st_route_path.append( index )
                     st_leaf_path.append( index )
-                    print(f"st_ld_path: {st_ld_path}")
                     print(f"st_route_path: {st_route_path}")
                     print(f"st_leaf_path: {st_leaf_path}")
-                    st_ld_path = []
 
                 # Register Path Node
                 ld_ld_path.append( index )
@@ -259,31 +257,29 @@ def Explore_Path( am, NodeList, path ):
                 ld_ld_path = []
 
             else:
-                
+                # Node is common instruction
                 if start_st:
-                    StPath.append( index )
-                    st_ld_path.append( index )
+                    if not start_ld:
+                        st_ld_path.append( index )
                     st_route_path.append( index )
                     st_leaf_path.append( index )
 
                 if start_ld:
-                    LdPath.append( index )
                     ld_ld_path.append( index )
                     ld_leaf_path.append( index )
 
-            past_index = tmp_index
+
             tmp_index = index
             if PtrList[ index ] > len( NNodes ):
                 index = Branch.pop(-1)
+                CountNodes -= 1
                 print("Branch Popped")
-                popped = True
             elif PtrList[ index ]  >= 2:
                 index = nlist.pop(0)
                 print(f"next node={index}")
             elif br:
                 print(f"NNodes: {NNodes}, PtrList[ index ]+1:{PtrList[ index ]+1}, index:{index}")
                 index = NNodes[ PtrList[ index ] + 1 ]
-                print(f"index={index}")      
             else:
                 print(f"NNodes: {NNodes}, PtrList[ index ]:{PtrList[ index ]}, index:{index}")
                 if 'store' in mnemonic[1] or 'load' in mnemonic[1] and len(NNodes) > 2:
@@ -292,40 +288,30 @@ def Explore_Path( am, NodeList, path ):
                     index = NNodes[ PtrList[ index ]  + 1 ]
                 else:
                     index = NNodes[ PtrList[ index ] ]
-                
-                print(f"index={index}")
+
 
             PtrList[ tmp_index ] += 1
 
             # Set explored node
-            print(f"tmp_index:{tmp_index}, index:{index}")
             em = SetExplored( em, tmp_index, index)
 
         elif is_LeafNode( mnemonic, index ):
-            
-            popped = False
-
             print("This is LEAF Node")
             PtrList[ index ] += 1
-            CountNodes += 0
 
             tmp_index = index
             if start_st:
-                StPath.append( index )
-                st_ld_path.append( index )
                 st_route_path.append( index )
                 st_leaf_path.append( index )
-                path.Register( 'st_ld_path', st_ld_path )
                 path.Register( 'st_route_path', st_route_path )
                 path.Register( 'st_leaf_path', st_leaf_path )
                 print(f"st_route_path: {st_route_path}")
                 print(f"st_leaf_path: {st_leaf_path}")
-                st_ld_path = []
                 st_route_path = []
                 st_leaf_path = []
+                st_ld_path = []
 
             if start_ld:
-                LdPath.append( index )
                 ld_ld_path.append( index )
                 ld_leaf_path.append( index )
                 path.Register( 'ld_leaf_path', ld_leaf_path )
@@ -336,41 +322,15 @@ def Explore_Path( am, NodeList, path ):
 
             # Set explored node
             path.Push( index )
+            if len(Branch) == 0:
+                break
             index = Branch.pop(-1)
             print("Branch Popped")
-            em = SetExplored( em, tmp_index, index)
-            popped = True
-
 
         # Check Remained Node
         #   exit when there is not remained
         nlist = GetNonExploredNodes( am, em )
         print(f"  nlist:{nlist}")
-        if popped:
-            popped = False
-            
-            # go to another graph when popped
-            tmp_CountNodes = CountNodes
-            #CountNodes -= len(nlist)
-            #CountNodes -= 1
-            if len(nlist) > 0:
-                index = nlist.pop(0)
-                print(f"  next root node-{index}")
-            else:
-                # otherwise continues
-                CountNodes = tmp_CountNodes
-
-            # Initialize
-            if start_st:
-                st_ld_path = []
-                st_route_path = []
-                st_leaf_path = []
-            if start_ld:
-                ld_ld_path = []
-                ld_leaf_path = []
-            start_st = False
-            start_ld = False
-
         print(em)
         print(f"CountNodes = {CountNodes}/{TotalNumNodes}")
 
