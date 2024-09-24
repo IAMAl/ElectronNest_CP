@@ -171,6 +171,9 @@ def Explore_Path( am, NodeList, path ):
         if len(NodeList) == 0:
             break
 
+        nlist = GetNonExploredNodes( am, em )
+        print(f"  nlist:{nlist}")
+
         # Fetch one row
         row = am[ index ]
 
@@ -182,16 +185,18 @@ def Explore_Path( am, NodeList, path ):
 
         print(f"NNodes:{NNodes}  mnemonic:{mnemonic}")
 
+        num_parent_nodes = is_ParentNodeExist( NNodes, index )
+
         br = False
 
         if not is_LeafNode( mnemonic, index ):
             print(f"This is NOT LEAF Node: {Branch}")
             if len(NNodes) > 2:
-                print(f"This is Branch Noode:{NNodes[1:]}")
+                print(f"This is Branch Noode:{NNodes[num_parent_nodes:]}")
                 br = True
 
             # Register  arriving the branch node
-            if ( len(NNodes) - is_ParentNodeExist( NNodes, index ) ) >= 2 and PtrList[ index ] < 1:
+            if ( len(NNodes) - num_parent_nodes ) >= 2 and PtrList[ index ] < 1:
                 Branch.append( index )
                 print(f"Branch: {Branch}")
 
@@ -283,8 +288,12 @@ def Explore_Path( am, NodeList, path ):
                 index = nlist.pop(0)
                 print(f"next node={index}")
             elif br:
-                print(f"NNodes: {NNodes}, PtrList[ index ]+1:{PtrList[ index ]+1}, index:{index}")
-                index = NNodes[ PtrList[ index ] + 1 ]
+                if num_parent_nodes > 1:
+                    index = NNodes[ num_parent_nodes + PtrList[ index ] ]
+                    CountNodes -= 1
+                else:
+                    print(f"NNodes: {NNodes}, PtrList[ index ]+1:{PtrList[ index ]+1}, index:{index}")
+                    index = NNodes[ PtrList[ index ] + 1 ]
             else:
                 print(f"NNodes: {NNodes}, PtrList[ index ]:{PtrList[ index ]}, index:{index}")
                 if 'store' in mnemonic[1] or 'load' in mnemonic[1] and len(NNodes) > 2:
@@ -294,11 +303,11 @@ def Explore_Path( am, NodeList, path ):
                 else:
                     index = NNodes[ PtrList[ index ] ]
 
-
+            print(f"next node={index}")
             PtrList[ tmp_index ] += 1
 
             # Set explored node
-            em = SetExplored( em, tmp_index, index)
+            em = SetExplored( em, tmp_index, index )
 
         elif is_LeafNode( mnemonic, index ):
             print("This is LEAF Node")
@@ -338,9 +347,7 @@ def Explore_Path( am, NodeList, path ):
 
         # Check Remained Node
         #   exit when there is not remained
-        nlist = GetNonExploredNodes( am, em )
-        print(f"  nlist:{nlist}")
-        print(em)
+        #print(em)
         print(f"CountNodes = {CountNodes}/{TotalNumNodes}")
 
     return path
