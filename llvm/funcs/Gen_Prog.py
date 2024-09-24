@@ -257,9 +257,9 @@ def PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, Ld, St):
         Path_ = []
 
         Path_A = CFGNode_A.ReadStLdPath(Path_No)
-        Indeces = Path_A[2]
+        Indeces_A = Path_A[2]
 
-        Ld_Indeces = Indeces[Ld][0]
+        Ld_Indeces = Indeces_A[Ld][0]
         for Ld_Index in Ld_Indeces:
             Tmp_Node_Ptr = Node_Ptr
             if Ld_Index != -1:
@@ -267,17 +267,6 @@ def PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, Ld, St):
                 while Cont:
 
                     CFGNode_B =  CFG_Nodes[CycleNo].ReadNode(Tmp_Node_Ptr+1)
-
-                    # Check Node Availability
-                    if isinstance(CFGNode_B, int):
-                        if CycleNo < (CFG_Nodes[CycleNo].ReadNumNodes()):
-                            # There is NO Available Node, Explore Next Cyclic Loop
-                            Path_B = PathPicker(CycleNo+1, Node_Ptr, CFGNode_B, CFG_Nodes, Path)
-                            if Path_B != None:
-                                Path_A[0] = Path_A[0]+Path_B
-                            Path_ = Path_A
-
-                            return Path_
 
                     if CFGNode_B.ReadNumPaths() == 0:
                         Cont = True
