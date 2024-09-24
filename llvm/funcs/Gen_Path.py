@@ -275,7 +275,8 @@ def Explore_Path( am, NodeList, path ):
                         st_ld_path.append( index )
                     st_route_path.append( index )
                     st_leaf_path.append( index )
-                    if br:
+                    #if br:
+                    if num_parent_nodes > 1:
                         path.Register( 'st_route_path', st_route_path )
                         path.Register( 'st_leaf_path', st_leaf_path )
                         st_route_path = []
