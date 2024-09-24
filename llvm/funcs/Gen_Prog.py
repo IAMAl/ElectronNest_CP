@@ -34,15 +34,17 @@ def ReadIndex( DFG_Path, DFG_Node_List ):
                 st_index1 = St_Node[2]
                 if not "%" in st_index1:
                     st_index1 = -1
-
-                st_index.append(int(st_index1[1:]))
+                    st_index.append(st_index1)
+                else:
+                    st_index.append(int(st_index1[1:]))
 
                 if len(St_Node) > 3:
                     st_index2 = St_Node[3]
                     if not "%" in st_index2:
                         st_index2 = -1
-
-                    st_index.append(st_index2)
+                        st_index.append(st_index2)
+                    else:
+                        st_index.append(int(st_index2[1:])
 
                 cnt_st += 1
 
@@ -63,15 +65,17 @@ def ReadIndex( DFG_Path, DFG_Node_List ):
                 ld_index1 = Ld_Node[2]
                 if not "%" in ld_index1:
                     ld_index1 = -1
-
-                ld_index.append(int(ld_index1[1:]))
+                    ld_index.append(ld_index1)
+                else:
+                    ld_index.append(int(ld_index1[1:]))
 
                 if len(Ld_Node) > 3:
                     ld_index2 = Ld_Node[3]
                     if not "%" in ld_index2:
                         ld_index2 = -1
-
-                    ld_index.append(int(ld_index2[1:]))
+                        ld_index.append(ld_index2)
+                    else:
+                        ld_index.append(int(ld_index2[1:]))
 
                 cnt_ld += 1
 
