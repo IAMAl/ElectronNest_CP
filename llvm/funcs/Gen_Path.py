@@ -126,7 +126,6 @@ def is_ParentNodeExist( NNodes, index ):
     for node in NNodes:
         if node < index:
             count += 1
-
     return count
 
 
@@ -135,6 +134,8 @@ def Explore_Path( am, NodeList, path ):
     TotalNumNodes = len( am[0] )
     PtrList = np.zeros( TotalNumNodes, dtype=int )
     em = np.zeros((TotalNumNodes, TotalNumNodes), dtype=int)
+
+    print("new bblock")
 
     # Counter
     #   count number of nodes arrived
@@ -161,10 +162,14 @@ def Explore_Path( am, NodeList, path ):
     # Node ID (index of Adjacency Matrix)
     index = 0
     tmp_index = 0
+    nlist = []
 
     while CountNodes <= TotalNumNodes and not Discon:
         if CountNodes > 0 and len(nlist) == 0:
             Discon = True
+            break
+        if len(NodeList) == 0:
+            break
 
         # Fetch one row
         row = am[ index ]
@@ -322,9 +327,13 @@ def Explore_Path( am, NodeList, path ):
 
             # Set explored node
             path.Push( index )
-            if len(Branch) == 0:
+            nlist = GetNonExploredNodes( am, em )
+            if len(Branch) > 0:
+                index = Branch.pop(-1)
+            elif len(nlist) > 0:
+                index = nlist[0]
+            else:
                 break
-            index = Branch.pop(-1)
             print("Branch Popped")
 
         # Check Remained Node
