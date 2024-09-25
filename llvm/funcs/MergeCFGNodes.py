@@ -27,7 +27,7 @@ def ExtractBBs( file_path, file_name ):
 
             if not line.isspace():
                 count += 1
-
+                
                 instrs.append(line)
 
                 # Check for a label
@@ -150,8 +150,8 @@ def CFGNodeMerger( r_file_path, r_file_name ):
                         for index, labels in enumerate(label_info):
                             chk_label = labels[1]
                             if bb_label in chk_label:
-                                #print(f"bblock:{bblocks[index]}")
-                                bblocks[index][-1] = bblocks[index][-1].replace(label, target_label)
+                                bblocks[index][len(bblocks[index])-2] = bblocks[index][len(bblocks[index])-2].replace(label, target_label)
+                                #print(f"bblock:{bblocks[index]}  label:{label}  target_label:{target_label}")
                                 bblock[bb_chk_index:] = bblock[bb_chk_index+1:]
                                 bblock[bb_chk_index-1-hit_count:] = bblock[bb_chk_index+1-hit_count:]
                                 hit_count += 2
@@ -187,7 +187,7 @@ def CFGNodeMerger( r_file_path, r_file_name ):
                             chk_label = labels[1]
                             if bb_label in chk_label:
                                 #print(f"bblock:{bblocks[index]}")
-                                bblocks[index][-1] = bblocks[index][-1].replace(label, target_label)
+                                bblocks[index][len(bblocks[index])-2] = bblocks[index][len(bblocks[index])-2].replace(label, target_label)
                                 bblock[bb_chk_index:] = bblock[bb_chk_index+1:]
                                 bblock[bb_chk_index-1-hit_count:] = bblock[bb_chk_index+1-hit_count:]
                                 hit_count += 2

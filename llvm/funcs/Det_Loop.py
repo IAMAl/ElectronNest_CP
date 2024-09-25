@@ -121,7 +121,7 @@ def GetPath( node_id1, node_id2, PathStack ):
                 end_index = index1 + 1
 
             path = PathStack[start_index:end_index]
-            #print(f"path:{path}")
+            print(f"path>>:{path}")
             return path
 
     return []
@@ -189,16 +189,25 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
                         IPaths.append( path )
                         if ptr_id_ptr <= smallest_ptr:
                             smallest_ptr = ptr_id_ptr
+                        break
 
             # Register Loops
             for ipath in IPaths:
                 loop = ipath
-                loop.append( Paths[index][0] )
-                loop.append( Paths[ptr][0] )
+                #loop.append( Paths[ptr][0] )
+                if Paths[index][0] not in loop:
+                    loop.append( Paths[index][0] )
+                else:
+                    offset = loop.index(Paths[index][0] )
+                    loop = loop[:offset+1]
+                if Paths[ptr][0] not in loop:
+                    loop.append( Paths[ptr][0] )
+                else:
+                    offset = loop.index(Paths[ptr][0] )
+                    loop = loop[:offset+1]
                 Loops.append(loop)
 
             # Update address
-            tmp_addr = addr
             addr = 1 + Paths[index][1]
             Paths[index][1] = addr
 

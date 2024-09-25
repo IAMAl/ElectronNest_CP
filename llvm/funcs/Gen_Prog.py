@@ -96,13 +96,13 @@ def Preprocess( r_file_path, r_file_name, CyclicPaths ):
     Role:
         Construct Control-Flow Graph
     """
-    #print("START PREPROCESS")
+    print("START PREPROCESS")
 
     CFGNodes = []
     for cycle_path in CyclicPaths:
 
         label_A = False
-        #print("Work in CFG Cyclic-Loop Path: {}".format(cycle_path))
+        print("Work in CFG Cyclic-Loop Path: {}".format(cycle_path))
         Nodes = graphutils.Create_CFGNodes()
 
         ptr = 0
@@ -140,21 +140,21 @@ def Preprocess( r_file_path, r_file_name, CyclicPaths ):
                     node_A.SetNeighborNode(cycle_path[-1])
 
                 # Register Node
-                #print("  CFG Node-{} is created".format(node_A_id))
+                print("  CFG Node-{} is created".format(node_A_id))
                 Nodes.SetNode(node_A)
 
                 ptr += 1
 
 
             # Read This Block's DFG Paths
-            #print("  Read DFG for CFG Node-{}".format(node_A_id))
+            print("  Read DFG for CFG Node-{}".format(node_A_id))
             DFG_paths, node_list = fileutils.ReadDFG(r_file_path=r_file_path, r_file_name=r_file_name, dfg_node_id=node_A_id)
 
             # Set Store-Load Path if available
             if isinstance(DFG_paths, list) and len(DFG_paths) > 0:
                 for no, DFG_path in enumerate(DFG_paths):
-                    #print("    Path-{}".format(no))
-                    #print("      Set Path: {}".format(DFG_path))
+                    print("    Path-{}".format(no))
+                    print("      Set Path: {}".format(DFG_path))
                     Nodes.SetStLdPaths(node_A_id, DFG_path)
 
                     St_Index, Ld_Index = ReadIndex(DFG_Path=DFG_path, DFG_Node_List=node_list)
@@ -194,11 +194,11 @@ def Preprocess( r_file_path, r_file_name, CyclicPaths ):
                             return Nodes
                         else:
                             node_A_id = remained_node.ReadNodeID()
-                            #print("  Set Node-{} to Node-A".format(node_A_id))
+                            print("  Set Node-{} to Node-A".format(node_A_id))
                             label_A = True
 
                 else:
-                    #print("  Set New Node-{} to Node-A".format(node_C_id))
+                    print("  Set New Node-{} to Node-A".format(node_C_id))
                     node_A_id = node_C_id
                     label_A = True
 
@@ -251,24 +251,26 @@ def PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, Ld, St):
             return Path
         else:
             Node_Ptr -= 1
+            
+    #print(Node_Ptr)
 
     for Path_No in range(CFGNode_A.ReadNumPaths()):
 
         Path_ = []
 
         Path_A = CFGNode_A.ReadStLdPath(Path_No)
-        #print(f"Path_A:{Path_A}")
+        print(f"Path_A:{Path_A}  Ld:{Ld}  St:{St}")
         Indeces_A = Path_A[2]
 
         Ld_Indeces = Indeces_A[Ld][0]
         for Ld_Index in Ld_Indeces:
-            #print(f"Ld_Index={Ld_Index}")
+            print(f"Ld_Index={Ld_Index}")
             Tmp_Node_Ptr = Node_Ptr
             if Ld_Index != -1:
                 Cont = True
                 while Cont:
 
-                    CFGNode_B =  CFG_Nodes[CycleNo].ReadNode(Tmp_Node_Ptr+1)
+                    CFGNode_B =  CFG_Nodes[CycleNo].ReadNode(Tmp_Node_Ptr)
 
                     if CFGNode_B.ReadNumPaths() == 0:
                         Cont = True
@@ -280,11 +282,12 @@ def PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, Ld, St):
 
                         Path_B = CFGNode_B.ReadStLdPath(Path_B_No)
                         Indeces_B = Path_B[2]
+                        #print(Path_B)
 
                         St_Indeces = Indeces_B[St][0]
                         for St_Index in St_Indeces:
-                            #print(f"Check St_Index={St_Index} with Ld_Index={Ld_Index}")
                             if St_Index != -1 and St_Index == Ld_Index:
+                                print(f"Check St_Index={St_Index} with Ld_Index={Ld_Index}, Path_B:{Path_B}")
                                 Tmp_Node_Ptr += 1
                                 Path_B = PathPicker(CycleNo, Tmp_Node_Ptr, CFGNode_B, CFG_Nodes, Path, Ld^1, St^1)
                                 if Path_B != None:

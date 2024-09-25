@@ -151,14 +151,14 @@ def ReadDFG( r_file_path="./", r_file_name="mvm", dfg_node_id="1"):
     """
     Read Data-Flow Graph and its Node List
     """
-    r_path_file_name = r_file_name+"_"+dfg_node_id+"_bpath_st_root.txt"
+    r_path_file_name = r_file_name+"_"+dfg_node_id+"_bpath_st_ld.txt"
     dfg_paths = ReadFile(file_path=r_file_path, file_name=r_path_file_name )
     DFG_Paths = graphutils.NodeParser( dfg_paths, 'dfg' )
-    print("    DFG Paths:{}".format(DFG_Paths))
+    #print("    DFG Paths:{}".format(DFG_Paths))
 
     r_node_list_file_name = r_file_name+"_"+dfg_node_id+"_node_list.txt"
     dfg_node_list = ReadFile(file_path=r_file_path, file_name=r_node_list_file_name )
     DFG_Node_List = graphutils.NodeParser( dfg_node_list, 'dfg' )
-    print("    DFG Node List:{}".format(DFG_Node_List))
+    #print("    DFG Node List:{}".format(DFG_Node_List))
 
     return DFG_Paths, DFG_Node_List
