@@ -44,7 +44,7 @@ def ReadIndex( DFG_Path, DFG_Node_List ):
                         st_index2 = -1
                         st_index.append(st_index2)
                     else:
-                        st_index.append(int(st_index2[1:])
+                        st_index.append(int(st_index2[1:]))
 
                 cnt_st += 1
 
@@ -96,13 +96,13 @@ def Preprocess( r_file_path, r_file_name, CyclicPaths ):
     Role:
         Construct Control-Flow Graph
     """
-    print("START PREPROCESS")
+    #print("START PREPROCESS")
 
     CFGNodes = []
     for cycle_path in CyclicPaths:
 
         label_A = False
-        print("Work in CFG Cyclic-Loop Path: {}".format(cycle_path))
+        #print("Work in CFG Cyclic-Loop Path: {}".format(cycle_path))
         Nodes = graphutils.Create_CFGNodes()
 
         ptr = 0
@@ -140,26 +140,26 @@ def Preprocess( r_file_path, r_file_name, CyclicPaths ):
                     node_A.SetNeighborNode(cycle_path[-1])
 
                 # Register Node
-                print("  CFG Node-{} is created".format(node_A_id))
+                #print("  CFG Node-{} is created".format(node_A_id))
                 Nodes.SetNode(node_A)
 
                 ptr += 1
 
 
             # Read This Block's DFG Paths
-            print("  Read DFG for CFG Node-{}".format(node_A_id))
+            #print("  Read DFG for CFG Node-{}".format(node_A_id))
             DFG_paths, node_list = fileutils.ReadDFG(r_file_path=r_file_path, r_file_name=r_file_name, dfg_node_id=node_A_id)
 
             # Set Store-Load Path if available
             if isinstance(DFG_paths, list) and len(DFG_paths) > 0:
                 for no, DFG_path in enumerate(DFG_paths):
-                    print("    Path-{}".format(no))
-                    print("      Set Path: {}".format(DFG_path))
+                    #print("    Path-{}".format(no))
+                    #print("      Set Path: {}".format(DFG_path))
                     Nodes.SetStLdPaths(node_A_id, DFG_path)
 
                     St_Index, Ld_Index = ReadIndex(DFG_Path=DFG_path, DFG_Node_List=node_list)
 
-                    print("      Set Indeces: Store{} Load{}".format(St_Index, Ld_Index, DFG_path))
+                    print("      Set Indeces: Store{} Load{} for path{}".format(St_Index, Ld_Index, DFG_path))
                     Nodes.SetStLdIndex(node_id=node_A_id, st=1, index=St_Index)
                     Nodes.SetStLdIndex(node_id=node_A_id, st=0, index=Ld_Index)
             else:
@@ -257,10 +257,12 @@ def PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, Ld, St):
         Path_ = []
 
         Path_A = CFGNode_A.ReadStLdPath(Path_No)
+        #print(f"Path_A:{Path_A}")
         Indeces_A = Path_A[2]
 
         Ld_Indeces = Indeces_A[Ld][0]
         for Ld_Index in Ld_Indeces:
+            #print(f"Ld_Index={Ld_Index}")
             Tmp_Node_Ptr = Node_Ptr
             if Ld_Index != -1:
                 Cont = True
@@ -281,6 +283,7 @@ def PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, Ld, St):
 
                         St_Indeces = Indeces_B[St][0]
                         for St_Index in St_Indeces:
+                            #print(f"Check St_Index={St_Index} with Ld_Index={Ld_Index}")
                             if St_Index != -1 and St_Index == Ld_Index:
                                 Tmp_Node_Ptr += 1
                                 Path_B = PathPicker(CycleNo, Tmp_Node_Ptr, CFGNode_B, CFG_Nodes, Path, Ld^1, St^1)

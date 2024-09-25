@@ -104,7 +104,7 @@ def GetMnemonic( NodeList, index ):
     return NodeList[ index ]
 
 
-def SetExplored( em, src_idx, dst_idx):
+def SetExplored( em, src_idx, dst_idx ):
     if dst_idx != src_idx:
         em[ src_idx ][ dst_idx ] = 1
         em[ dst_idx ][ src_idx ] = 1
@@ -129,13 +129,13 @@ def is_ParentNodeExist( NNodes, index ):
     return count
 
 
-def Explore_Path( am, NodeList, path ):
+def Explore_Path( am, NodeList ):
+
+    path = Path()
 
     TotalNumNodes = len( am[0] )
     PtrList = np.zeros( TotalNumNodes, dtype=int )
-    em = np.zeros((TotalNumNodes, TotalNumNodes), dtype=int)
-
-    print("new bblock")
+    em = np.zeros(( TotalNumNodes, TotalNumNodes), dtype=int )
 
     # Counter
     #   count number of nodes arrived
@@ -165,9 +165,11 @@ def Explore_Path( am, NodeList, path ):
     nlist = []
 
     while CountNodes <= (TotalNumNodes+1) and not Discon:
+
         if CountNodes > 0 and len(nlist) == 0:
             Discon = True
             break
+
         if len(NodeList) == 0:
             break
 
@@ -183,16 +185,17 @@ def Explore_Path( am, NodeList, path ):
         # Fetch Mnemonic
         mnemonic = GetMnemonic( NodeList, index )
 
-        print(f"NNodes:{NNodes}  mnemonic:{mnemonic}")
-
+        # Number of Parent Nodes
         num_parent_nodes = is_ParentNodeExist( NNodes, index )
+
+        #print(f"NNodes:{NNodes}  mnemonic:{mnemonic}")
 
         br = False
 
         if not is_LeafNode( mnemonic, index ):
-            print(f"  This is NOT LEAF Node: {Branch}")
+            #print(f"  This is NOT LEAF Node: {Branch}")
             if len(NNodes) > 2:
-                print(f"    This is Branch Noode:{NNodes[num_parent_nodes:]}")
+                #print(f"    This is Branch Noode:{NNodes[num_parent_nodes:]}")
                 br = True
 
             # Register  arriving the branch node
@@ -273,26 +276,25 @@ def Explore_Path( am, NodeList, path ):
                 if start_st:
                     if not start_ld:
                         st_ld_path.append( index )
+                        #print(f"st_ld_path: {st_ld_path}")
                     st_route_path.append( index )
                     st_leaf_path.append( index )
-                    #if br:
-                    if num_parent_nodes > 1:
-                        path.Register( 'st_route_path', st_route_path )
-                        path.Register( 'st_leaf_path', st_leaf_path )
-                        st_route_path = []
-                        st_leaf_path = []
+                    #print(f"st_route_path: {st_route_path}")
+                    #print(f"st_leaf_path: {st_leaf_path}")
 
                 # Register Path Node
                 if start_ld:
                     ld_ld_path.append( index )
                     ld_leaf_path.append( index )
+                    #print(f"ld_ld_path: {ld_ld_path}")
+                    #print(f"ld_leaf_path: {ld_leaf_path}")
 
 
             tmp_index = index
             if PtrList[ index ] > len( NNodes ):
                 index = Branch.pop(-1)
                 CountNodes -= 1
-                print("  Branch Popped")
+                #print("  Branch Popped")
             elif PtrList[ index ]  >= 2:
                 if len(nlist) > 0:
                     index = nlist[0]
@@ -301,11 +303,16 @@ def Explore_Path( am, NodeList, path ):
                     break
             elif br:
                 if num_parent_nodes > 1:
+                    #print(f"Fan-out={num_parent_nodes}")
                     index = NNodes[ num_parent_nodes + PtrList[ index ] ]
                     CountNodes -= 1
                 else:
                     #print(f"NNodes: {NNodes}, PtrList[ index ]+1:{PtrList[ index ]+1}, index:{index}")
                     index = NNodes[ PtrList[ index ] + 1 ]
+                    check_index = NNodes[ PtrList[ index ] ]
+                    check_mnemonic = GetMnemonic( NodeList, check_index )
+                    if 'load' in check_mnemonic[1]:
+                        start_ld = True
             else:
                 #print(f"NNodes: {NNodes}, PtrList[ index ]:{PtrList[ index ]}, index:{index}")
                 if 'store' in mnemonic[1] or 'load' in mnemonic[1] and len(NNodes) > 2:
@@ -315,14 +322,14 @@ def Explore_Path( am, NodeList, path ):
                 else:
                     index = NNodes[ PtrList[ index ] ]
 
-            print(f"  next node={index}")
+            #print(f"  next node={index}")
             PtrList[ tmp_index ] += 1
 
             # Set explored node
             em = SetExplored( em, tmp_index, index )
 
         elif is_LeafNode( mnemonic, index ):
-            print("This is LEAF Node")
+            #print("This is LEAF Node")
             PtrList[ index ] += 1
 
             # Register Path Node
@@ -361,14 +368,46 @@ def Explore_Path( am, NodeList, path ):
         # Check Remained Node
         #   exit when there is not remained
         #print(em)
-        print(f"CountNodes = {CountNodes}/{TotalNumNodes}")
+        #print(f"CountNodes = {CountNodes}/{TotalNumNodes}")
 
     return path
 
 
+def stldpath_formatter( st_ld_paths, st_leaf_paths ):
+
+    reg_st_ld_paths = []
+
+    for st_ld_ptr in range(len(st_ld_paths)):
+        st_ld_path = st_ld_paths[st_ld_ptr]
+        #print(f"st_ld_path:{st_ld_path}")
+        if 0 == st_ld_path[0]:
+            reg_st_ld_paths.append(st_ld_path)
+            st_ld_path = []
+            continue
+        else:
+            head_id = st_ld_path[0]
+            for st_leaf_ptr in range(len(st_leaf_paths)-1, -1, -1):
+                st_leaf_path = st_leaf_paths[st_leaf_ptr]
+                #print(f"st_leaf_path : {st_leaf_path}")
+                if head_id in st_leaf_path and head_id != st_leaf_path[0]:
+                    idx = st_leaf_path.index(head_id)
+                    st_ld_path = st_leaf_path[:idx]+st_ld_path
+                    head_id = st_ld_path[0]
+
+                    if 0 == st_ld_path[0]:
+                        reg_st_ld_paths.append(st_ld_path)
+                        st_ld_path = []
+                        break
+
+    return reg_st_ld_paths
+
 def Gen_Path( am, NodeList, w_path, w_name ):
-    path = Path()
-    path_ = Explore_Path( am, NodeList, path )
+
+    path_ = Explore_Path( am, NodeList )
+
+    st_ld_paths = path_.Get( 'st_ld_path' )
+    st_leaf_paths = path_.Get( 'st_leaf_path' )
+    st_ld_path = stldpath_formatter( st_ld_paths, st_leaf_paths )
 
     w_path_name = w_path+'/'+w_name+"_bpath_st_root.txt"
     with open(w_path_name, "w") as st_bpath:
@@ -380,7 +419,7 @@ def Gen_Path( am, NodeList, w_path, w_name ):
 
     w_path_name = w_path+'/'+w_name+"_bpath_st_ld.txt"
     with open(w_path_name, "w") as st_bpath:
-        st_bpath.writelines(map(str, path_.Get( 'st_ld_path' )))
+        st_bpath.writelines(map(str, st_ld_path))
 
     w_path_name = w_path+'/'+w_name+"_bpath_ld_ld.txt"
     with open(w_path_name, "w") as st_bpath:
