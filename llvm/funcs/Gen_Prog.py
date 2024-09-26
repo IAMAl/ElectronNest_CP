@@ -265,18 +265,15 @@ def PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, Ld, St):
         Ld_Indeces = Indeces_A[Ld][0]
         for Ld_Index in Ld_Indeces:
             print(f"Ld_Index={Ld_Index}")
-            Tmp_Node_Ptr = Node_Ptr
+            Tmp_Node_Ptr = Node_Ptr + 1
+            
             if Ld_Index != -1:
-                Cont = True
-                while Cont:
+                while True
 
                     CFGNode_B =  CFG_Nodes[CycleNo].ReadNode(Tmp_Node_Ptr)
 
                     if CFGNode_B.ReadNumPaths() == 0:
-                        Cont = True
                         Tmp_Node_Ptr += 1
-                    else:
-                        Cont = False
 
                     for Path_B_No in range(CFGNode_B.ReadNumPaths()):
 
@@ -288,14 +285,10 @@ def PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, Ld, St):
                         for St_Index in St_Indeces:
                             if St_Index != -1 and St_Index == Ld_Index:
                                 print(f"Check St_Index={St_Index} with Ld_Index={Ld_Index}, Path_B:{Path_B}")
-                                Tmp_Node_Ptr += 1
                                 Path_B = PathPicker(CycleNo, Tmp_Node_Ptr, CFGNode_B, CFG_Nodes, Path, Ld^1, St^1)
                                 if Path_B != None:
                                     Path_A[0] = Path_A[0]+Path_B
                                 Path_ = Path_A
-                            elif St_Index == -1:
-                                Cont = True
-                                Tmp_Node_Ptr += 1
 
             if len(Path_) > 0:
                 Path.append(Path_)
@@ -309,18 +302,19 @@ def BackTrack(CFG_Nodes):
     Node_Ptr = 0
     CFGNodes = CFG_Nodes[0]
     Path = []
-    Cont = True
-    while Cont:
+
+    while True
         Cont, CFGNode_A = CFGNodes.ReadInitNode()
         if CFGNode_A == -1:
             Cont = True
             CycleNo += 1
             Node_Ptr = 0
+        elif not Cont
+            break
         else:
             print("Read Remained Node: {}".format(CFGNode_A.ReadNodeID()))
-            #Cont = False
-
-        #if Cont:
+            break
+            
         print(f">>>> PathPicker")
         path = PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, 1, 0)
         Node_Ptr += 1
