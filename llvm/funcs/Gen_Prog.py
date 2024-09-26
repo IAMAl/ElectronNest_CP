@@ -268,7 +268,7 @@ def PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, Ld, St):
             Tmp_Node_Ptr = Node_Ptr + 1
             
             if Ld_Index != -1:
-                while True
+                while Tmp_Node_Ptr >= CFGNode_B.ReadNumNodes():
 
                     CFGNode_B =  CFG_Nodes[CycleNo].ReadNode(Tmp_Node_Ptr)
 
