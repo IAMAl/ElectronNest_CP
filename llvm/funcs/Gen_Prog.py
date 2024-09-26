@@ -304,21 +304,24 @@ def BackTrack(CFG_Nodes):
     Path = []
 
     while True
+    
         Cont, CFGNode_A = CFGNodes.ReadInitNode()
+    
         if CFGNode_A == -1:
-            Cont = True
             CycleNo += 1
             Node_Ptr = 0
-        elif not Cont
+            Work = False
+        elif not Cont:
             break
         else:
-            print("Read Remained Node: {}".format(CFGNode_A.ReadNodeID()))
-            break
-            
-        print(f">>>> PathPicker")
-        path = PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, 1, 0)
-        Node_Ptr += 1
-        Path.append(path)
-        print(f">>>> {Path}")
+            print(f"Read Remained Node: {CFGNode_A.ReadNodeID()}")
+            Work = True
+
+        if Work:
+            print(f"Start PathPicker")
+            path = PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, 1, 0)
+            Node_Ptr += 1
+            Path.append(path)
+            print(f"Path:{Path}")
 
     return Path
