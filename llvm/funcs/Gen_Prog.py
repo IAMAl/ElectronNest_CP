@@ -251,7 +251,7 @@ def PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, Ld, St):
             return Path
         else:
             Node_Ptr -= 1
-            
+
     #print(Node_Ptr)
 
     for Path_No in range(CFGNode_A.ReadNumPaths()):
@@ -266,7 +266,7 @@ def PathPicker(CycleNo, Node_Ptr, CFGNode_A, CFG_Nodes, Path, Ld, St):
         for Ld_Index in Ld_Indeces:
             print(f"Ld_Index={Ld_Index}")
             Tmp_Node_Ptr = Node_Ptr + 1
-            
+
             if Ld_Index != -1:
                 while Tmp_Node_Ptr <= CFGNode_B.ReadNumNodes():
 
@@ -302,10 +302,10 @@ def BackTrack(CFG_Nodes):
     CFGNodes = CFG_Nodes[0]
     Path = []
 
-    while True
-    
+    while True:
+
         Cont, CFGNode_A = CFGNodes.ReadInitNode()
-    
+
         if CFGNode_A == -1:
             CycleNo += 1
             Node_Ptr = 0
