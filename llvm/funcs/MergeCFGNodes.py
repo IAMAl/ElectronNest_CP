@@ -27,7 +27,7 @@ def ExtractBBs( file_path, file_name ):
 
             if not line.isspace():
                 count += 1
-                
+
                 instrs.append(line)
 
                 # Check for a label
@@ -48,6 +48,10 @@ def ExtractBBs( file_path, file_name ):
                     branch_instruction = None
                     instrs = []
                     count = 0
+
+    if current_label is not None:
+        basic_blocks.append([current_label, '', count])
+        bblocks.append(instrs)
 
     return bblocks, basic_blocks
 
@@ -141,7 +145,7 @@ def CFGNodeMerger( r_file_path, r_file_name ):
                                 #print(f"index_t:{index_t} pred_label:{pred_label}")
                                 break
 
-                        bblocks[t_index_t][0] = bblocks[t_index_t][0].replace('%', '').replace(bb_label, " "+pred_label)
+                        bblocks[t_index_t-hit_count][0] = bblocks[t_index_t-hit_count][0].replace('%', '').replace(bb_label, " "+pred_label).replace('\n', '')
                         #print(f"bblocks[t_index_t][0]:{bblocks[t_index_t][0]}")
 
                         target_label = '%'+label_t
@@ -152,9 +156,8 @@ def CFGNodeMerger( r_file_path, r_file_name ):
                             if bb_label in chk_label:
                                 bblocks[index][len(bblocks[index])-2] = bblocks[index][len(bblocks[index])-2].replace(label, target_label)
                                 #print(f"bblock:{bblocks[index]}  label:{label}  target_label:{target_label}")
-                                bblock[bb_chk_index:] = bblock[bb_chk_index+1:]
-                                bblock[bb_chk_index-1-hit_count:] = bblock[bb_chk_index+1-hit_count:]
-                                hit_count += 2
+                                bblocks.pop(bb_chk_index-hit_count)
+                                hit_count += 1
 
                     if label_f is not None:
                         f_index_t = 0
@@ -186,17 +189,22 @@ def CFGNodeMerger( r_file_path, r_file_name ):
                         for index, labels in enumerate(label_info):
                             chk_label = labels[1]
                             if bb_label in chk_label:
-                                #print(f"bblock:{bblocks[index]}")
                                 bblocks[index][len(bblocks[index])-2] = bblocks[index][len(bblocks[index])-2].replace(label, target_label)
-                                bblock[bb_chk_index:] = bblock[bb_chk_index+1:]
-                                bblock[bb_chk_index-1-hit_count:] = bblock[bb_chk_index+1-hit_count:]
-                                hit_count += 2
+                                #print(f"bblock:{bblocks[index]}  label:{label}  target_label:{target_label}")
+                                bblocks.pop(bb_chk_index-hit_count)
+                                hit_count += 1
 
                     print("\n")
-        if not find:
+        if not find and bb_index < len(bblocks):
             bblocks[bb_index].append('\n')
 
-    return bblocks
+    bblocks_ = []
+    for bblock in bblocks:
+        if len(bblock[-1]) > 2:
+            bblock.append('\n')
+        bblocks_.append(bblock)
+
+    return bblocks_
 
 
 def ExtractCFGNodeMerger( r_file_path, r_file_name, w_file_path ):

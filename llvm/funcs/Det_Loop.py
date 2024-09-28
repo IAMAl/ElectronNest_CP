@@ -150,8 +150,8 @@ def CycleDetector( am_size=0, am=[], nodes=[], edgetab=[] ):
 
     while not is_NotTerm(Paths):
 
-        #print(f"Paths = {Paths}")
-        #print(f"  ptr = {ptr}, addr = {addr}, index = {index}")
+        print(f"Paths = {Paths}")
+        print(f"  ptr = {ptr}, addr = {addr}, index = {index}")
 
         nnode_id = Paths[ptr][2][addr]
         print(f"  Check Neighbor Node-{nnode_id} for Node-{Paths[ptr][0]}")
