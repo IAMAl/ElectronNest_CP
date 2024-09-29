@@ -162,3 +162,33 @@ def ReadDFG( r_file_path="./", r_file_name="mvm", dfg_node_id="1"):
     #print("    DFG Node List:{}".format(DFG_Node_List))
 
     return DFG_Paths, DFG_Node_List
+
+
+def ReadOperands( r_file_path, r_file_name, dfg_node_id ):
+    r_path_file_name = r_file_name+"_"+dfg_node_id+"_operands.txt"
+    dfg_paths = ReadFile(file_path=r_file_path, file_name=r_path_file_name )
+
+    Operands = []
+    for dfg_path in dfg_paths:
+        dfg_path = dfg_path.split()
+
+        if len(dfg_path) > 4:
+            opcode = dfg_path[0]
+            dst = dfg_path[1:len(dfg_path)-3]
+            src = dfg_path[len(dfg_path)-3:]
+        elif len(dfg_path) > 3:
+            opcode = dfg_path[0]
+            dst = [dfg_path[1]]
+            src = dfg_path[2:]
+        elif len(dfg_path) > 2:
+            opcode = dfg_path[0]
+            dst = [dfg_path[1]]
+            src = [dfg_path[2]]
+        elif len(dfg_path) > 1:
+            opcode = dfg_path[0]
+            dst = ['None']
+            src = [dfg_path[1]]
+
+        Operands.append([ opcode, dst, src ])
+
+    return Operands

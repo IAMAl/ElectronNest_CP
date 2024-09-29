@@ -419,7 +419,7 @@ def Gen_Path( am, NodeList, w_path, w_name ):
 
     w_path_name = w_path+'/'+w_name+"_bpath_st_ld.txt"
     with open(w_path_name, "w") as st_bpath:
-        st_bpath.writelines(map(str, st_ld_path))
+        st_bpath.writelines(map(str, st_ld_paths))
 
     w_path_name = w_path+'/'+w_name+"_bpath_ld_ld.txt"
     with open(w_path_name, "w") as st_bpath:

@@ -208,7 +208,7 @@ def CFGNodeMerger( r_file_path, r_file_name ):
 
 
 def ExtractCFGNodeMerger( r_file_path, r_file_name, w_file_path ):
-    w_file_name = r_file_name+"_merged.txt"
+    w_file_name = r_file_name+"_merged.ll"
 
     bblocks = CFGNodeMerger(r_file_path, r_file_name)
     with open(w_file_path+"/"+w_file_name, 'w') as file:

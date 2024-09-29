@@ -68,13 +68,13 @@ def AMComposer( ZERO_REMOVE=False, mode="dst_append", zero_remove=False, r_file_
     # Parsing
     # Feeding dot file, and split with "->"
     dot_lines = []
-    src_line = []
 
     openfile = r_file_path +"/"+ r_file_name+".dot"
     with open(openfile, "r") as dot_file:
         for present_line in dot_file:
 
             present_line = present_line.split(' -> ')
+            print(f"present_line:{present_line}")
 
             tmp_line = []
             if len(present_line) > 1:
@@ -83,7 +83,7 @@ def AMComposer( ZERO_REMOVE=False, mode="dst_append", zero_remove=False, r_file_
                     tmp = present_line[1][1].split(' label=')
                     if len(tmp) > 1:
                         tmp_line.append(present_line[1][0])
-                        tmp= tmp[1][1:len(tmp)-4]
+                        tmp = tmp[1][1:len(tmp)-4]
                         tmp_line.append(present_line[0])
                         tmp_line.append(tmp)
                         present_line = tmp_line
@@ -106,7 +106,7 @@ def AMComposer( ZERO_REMOVE=False, mode="dst_append", zero_remove=False, r_file_
                 dot_lines.append(present_line)
 
 
-    #print(dot_lines)
+    print(dot_lines)
 
 
     # Node-ID Composition

@@ -46,10 +46,11 @@ for index in range(len(CFG_Nodes)-1, -1, -1):
 
 # Tracking
 print(f"BackTrack")
-path = genprog.BackTrack(CFGNodes_)
-
-print(path)
+paths = genprog.BackTrack(CFGNodes_)
 
 openfile = w_file_path +'/'+ name +".txt"
 with open(openfile, "w") as agu_prog:
-    agu_prog.writelines(str(path))
+    for path in paths:
+        for item in path:
+            print(item)
+            agu_prog.writelines(map(str, item))

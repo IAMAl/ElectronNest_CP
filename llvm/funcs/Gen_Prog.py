@@ -12,7 +12,7 @@ import utils.GraphUtils as graphutils
 import utils.FileUtils as fileutils
 
 
-def ReadIndex( DFG_Path, DFG_Node_List ):
+def ReadIndex( DFG_Paths, DFG_Path, DFG_Node_List, Operands ):
     """
     Read Indeces of Store and Load IR Instructions
     - Begining Element in Data-Flow Path is Store Node of Data-Flow Path
@@ -49,7 +49,29 @@ def ReadIndex( DFG_Path, DFG_Node_List ):
                 cnt_st += 1
 
         if cnt_st == 0:
-            st_index = [-1]
+            Header_ID = DFG_Path[0]
+            chk_opcode = DFG_Node_List[ Header_ID ]
+            for Operand in Operands:
+                opcode = Operand[0]
+                dst = Operand[1]
+                if opcode in chk_opcode:
+                    break
+
+            while len(dst) > 1:
+                for dfg_path in DFG_Paths:
+                    if Header_ID in dfg_path:
+                        header_index = dfg_path.index( Header_ID ) - 1
+                        src_indeces = DFG_Node_List[ header_index ][2:]
+
+                        for src_index in src_indeces:
+                            if src_index in dst:
+                                dst_index = dst.index( src_index )
+                                dst.pop( dst_index )
+
+            if (dst) == 1:
+                st_index = [dst[0][1:]]
+            else:
+                st_index = [-1]
 
 
         cnt_ld = 0
@@ -149,6 +171,7 @@ def Preprocess( r_file_path, r_file_name, CyclicPaths ):
             # Read This Block's DFG Paths
             #print("  Read DFG for CFG Node-{}".format(node_A_id))
             DFG_paths, node_list = fileutils.ReadDFG(r_file_path=r_file_path, r_file_name=r_file_name, dfg_node_id=node_A_id)
+            Operands = fileutils.ReadOperands( r_file_path=r_file_path, r_file_name=r_file_name, dfg_node_id=node_A_id )
 
             # Set Store-Load Path if available
             if isinstance(DFG_paths, list) and len(DFG_paths) > 0:
@@ -157,7 +180,7 @@ def Preprocess( r_file_path, r_file_name, CyclicPaths ):
                     #print("      Set Path: {}".format(DFG_path))
                     Nodes.SetStLdPaths(node_A_id, DFG_path)
 
-                    St_Index, Ld_Index = ReadIndex(DFG_Path=DFG_path, DFG_Node_List=node_list)
+                    St_Index, Ld_Index = ReadIndex( DFG_paths=DFG_paths, DFG_Path=DFG_path, DFG_Node_List=node_list, Operands=Operands )
 
                     #print("      Set Indeces: Store{} Load{} for path{}".format(St_Index, Ld_Index, DFG_path))
                     Nodes.SetStLdIndex(node_id=node_A_id, st=1, index=St_Index)

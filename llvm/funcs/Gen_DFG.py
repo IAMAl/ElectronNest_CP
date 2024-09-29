@@ -408,3 +408,46 @@ def BlockDataFlowExtractor( prog, MNEMONIC_MODE, UNIQUE_ID ):
                     no_offset += num_instrs
 
                 g.write("}")
+
+    
+    no_offset = 0
+
+    for func in prog.funcs:
+        name_func = func.name
+
+        for bblock in func.bblocks:
+            name_bblock = bblock.name
+
+            with open(name_func+"_bblock_"+name_bblock+"_operands.txt", "w") as block_dfg:
+                
+                num_instrs = bblock.num_instrs
+                #print("BBlock: {}".format(name_bblock))
+                for no_instr in range(num_instrs - 1, -1, -1):
+
+                    instr = bblock.instrs[no_instr]
+                    dst_name = instr.dst
+                    operands = instr.operands
+                    imm = instr.imm
+
+                    if dst_name == None:
+                        dst_name = 'None'
+                        
+                    #print("dst {} {}".format(dst_name, instr.opcode))
+
+                    if len(operands) > 1:
+                        src1_name = operands[0]
+                        src2_name = operands[1]
+                        #print("src1 {} src2 {}".format(src2_name, src2_name))
+                        find = False
+                        for search_no in range(no_instr-1, -1, -1):
+                            search_instr = bblock.instrs[search_no]
+                            search_dst = search_instr.dst
+                            if search_dst == src2_name:
+                                find = True
+                                block_dfg.write(instr.opcode+"_"+str(no_instr+no_offset)+" "+dst_name+" "+src1_name+" "+src2_name+"\n")
+
+                        if not find:
+                            block_dfg.write(instr.opcode+"_"+str(no_instr+no_offset)+" "+dst_name+" "+src2_name+" "+src1_name+"\n")
+
+                if UNIQUE_ID:
+                    no_offset += num_instrs
